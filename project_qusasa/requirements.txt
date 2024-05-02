@@ -25,7 +25,6 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1
 click-repl==0.3.0
 cligj==0.7.2
-clyent==1.2.2
 cohere==4.55
 conda-verify==3.4.2
 constantly==15.1.0
