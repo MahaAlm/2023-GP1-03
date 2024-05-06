@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qusasa | YouTube Video Retrieval</title>
+    <title>Qusasa | YouTube Similar Videos</title>
     <!-- Linking CSS -->
     <link rel="stylesheet" href="{% static 'qusasa/css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'qusasa/css/cards.css' %}" />
@@ -90,7 +90,7 @@
             <li><a href="{% url 'base' %}" {% if request.resolver_match.url_name == 'base' %}  {% endif %}> Home</a></li>
             <li><a href="{% url 'wFeature' %}" {% if request.resolver_match.url_name == 'base' %}  {% endif %}>Qusasa's Features</a></li>
             <li><a href="{% url 'YouTubeFeat' %}" {% if request.resolver_match.url_name == 'base' %}  {% endif %}>YouTube Features</a></li>
-            <li id="current">Video Retrieval</li>
+            <li id="current">Similar Videos</li>
         </ul>
 
       <div class="history">
@@ -98,7 +98,7 @@
             <div class="feature-head">
                     <img src="{% static 'qusasa/images/video_retrival.webp' %}" alt="">
                 <div class="feature-text">
-                    <h1>Video Retrieval</h1>
+                    <h1>Similar Videos</h1>
                     <p>This feature allows you to input a specific video and assemble a selection of videos that delve into relevant aspects of that video's topics.</p>
                     <a href="{% url 'video_retriving' %}"><button><i class="fa-solid fa-circle-play"></i>  Start now</button></a>
                 </div>

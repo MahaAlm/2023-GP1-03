@@ -516,7 +516,7 @@ def add_hyperlink(paragraph, url, text, color, underline, heading=False):
 def def_retrive(request):
               
         doc = Document()
-        doc.add_heading('Videos Retriving', 0)
+        doc.add_heading('Similar videos', 0)
         doc.add_paragraph('Explore the collection below to discover content related to your search. Use these insights to enhance your understanding, create content, or simply enjoy the diversity of videos available on your topic of interest.')
                 
         related_videos_full_dict = request.session['related_videos_full_dict']

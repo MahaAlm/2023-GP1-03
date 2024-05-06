@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qusasa | Video Retrieval Template</title>
+    <title>Qusasa | Similar Videos Template</title>
     <!-- Linking CSS -->
     <link rel="stylesheet" href="{% static 'qusasa/css/base.css' %}" />
     <link rel="stylesheet" href="{% static 'qusasa/css/cards.css' %}" />
@@ -33,7 +33,7 @@
     
         <ul class="breadcrumbs">
             <li><a href="{% url 'base' %}" {% if request.resolver_match.url_name == 'base' %}  {% endif %}> Home</a></li>
-            <li id="current">Video Retrieval {{history.id}} template</li>
+            <li id="current">Similar Videos {{history.id}} template</li>
         </ul>
 
       <div class="history">
@@ -41,7 +41,7 @@
             <div class="feature-head">
                     <img src="{% static 'qusasa/images/video_retrival.webp'  %}" style="object-fit: contain; max-width: 22rem;" alt="">
                 <div class="feature-text">
-                  <h1>Video Retrieval</h1>
+                  <h1>Similar Videos</h1>
                   <p>This feature allows you to input a specific video and assemble a selection of videos that delve into relevant aspects of that video's topics.</p>
                     <div class="input-output">
                         <div class="input">
