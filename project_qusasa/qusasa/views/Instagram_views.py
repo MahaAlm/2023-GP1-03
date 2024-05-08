@@ -88,8 +88,8 @@ class PostAnalysisWizard(SessionWizardView):
         self.request.session['Post_csv'] = Post_csv
         self.request.session['publishedAt'] = PostDf['publishedAt'].iloc[0]
         self.request.session['owner'] = PostDf['owner'].iloc[0]
-        self.request.session['thumbnial_url'] = PostDf['thumbnial_url'].iloc[0]
-        self.request.session['icon_url'] = PostDf['icon_url'].iloc[0]
+        self.request.session['thumbnial_url'] = str(PostDf['thumbnial_url'].iloc[0])
+        self.request.session['icon_url'] = str(PostDf['icon_url'].iloc[0])
         self.request.session['top_keywords'] = PostDf['top_keywords'].iloc[0]
         self.request.session['MediaCount'] = int(PostDf['MediaCount'].iloc[0])
         self.request.session['followerCount'] = int(PostDf['followerCount'].iloc[0])

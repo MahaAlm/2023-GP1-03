@@ -716,3 +716,32 @@ margin-bottom: 3rem;}
     font-weight: 700;
     margin-bottom: 30px;
 }
+
+.schedule-container {
+    width: 80%;
+}
+
+.schedule-container p {
+    margin-bottom: 2.5rem;
+}
+
+.schedule-container button {
+    outline: none;
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    background: #5db1ba;
+    color: white;
+    font-family: 'Raleway';
+    font-weight: 800;
+    font-size: 1rem;
+    margin-top: 0;
+    cursor: pointer;
+    transition: .2s ease-in-out;
+}
+
+.schedule-container button:hover {
+    transform: translateY(-5px);
+    transition: .2s ease-in-out;
+
+}

@@ -20,12 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-cwx3g_hxv)l(^#ynxr3^8g#s+wz*%exqcw=qq8a)o71%*^shem"
+import os
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "django-insecure-cwx3g_hxv)l(^#ynxr3^8g#s+wz*%exqcw=qq8a)o71%*^shem")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['project-qusasa.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -40,8 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
-    'debug_toolbar',
 ]
+
 
 ASGI_APPLICATION = 'project_qusasa.asgi.application' 
 
@@ -64,10 +65,15 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
       'whitenoise.middleware.WhiteNoiseMiddleware',
 
 ]
+
+
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -95,6 +101,7 @@ WSGI_APPLICATION = "project_qusasa.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -102,6 +109,8 @@ DATABASES = {
     }
 }
 
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -157,12 +166,14 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'qusasacustomerservice@gmail.com'
-EMAIL_HOST_PASSWORD = 'dzgh rtxx qhzh ahvo'
+
 
 LOGIN_URL = 'login'
 
@@ -198,3 +209,17 @@ YOUTUBE_DEVELOPER_KEY = os.environ.get("AIzaSyB5Mi7IXiOBEq5f7nk_kIiq-bVZ6m25rwE"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [REDIS_URL],
+        },
+    },
+}
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

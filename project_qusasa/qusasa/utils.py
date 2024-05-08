@@ -216,7 +216,7 @@ def get_videos_info(entity_id, youtube, entity_type='channel'):
             top_video_info['topComments'] = top_comments
             top_video_info['commentSentiments'] = sentiment_percentages
         except:
-            print(f"Comments are disabled for video ID {top_video_info['videoId']}. Error: {e}")
+            print(f"Comments are disabled for video ID {top_video_info['videoId']}.")
             # Optional: set comments-related info to None or an empty structure
             top_video_info['topComments'] = []
             top_video_info['commentSentiments'] = {}
@@ -440,18 +440,14 @@ import pandas as pd
 
 
 
-from transformers import pipeline, BertTokenizer
 
-# Load the tokenizer
-tokenizer = BertTokenizer.from_pretrained('bhadresh-savani/bert-base-go-emotion')
-
-# Load the emotion analysis pipeline
-emotion_pipeline = pipeline('text-classification', model='bhadresh-savani/bert-base-go-emotion')
+from django.apps import apps
+app_config = apps.get_app_config('qusasa')
 
 def analyze_comments_emotions(comments_df):
     
-    tokenizer = BertTokenizer.from_pretrained('bhadresh-savani/bert-base-go-emotion')
-    model = AutoModelForSequenceClassification.from_pretrained('bhadresh-savani/bert-base-go-emotion')
+    model = app_config.model
+    tokenizer = app_config.tokenizer
 
     # Function to safely analyze emotion (with truncation)
     def get_emotion(texts):
