@@ -19,14 +19,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 import os
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "django-insecure-cwx3g_hxv)l(^#ynxr3^8g#s+wz*%exqcw=qq8a)o71%*^shem")
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['project-qusasa.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -109,8 +108,8 @@ DATABASES = {
     }
 }
 
-import dj_database_url
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# import dj_database_url
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -156,8 +155,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
-LOGIN_REDIRECT_URL = 'base'  # or any other name of the URL pattern
-LOGOUT_REDIRECT_URL = 'home'  # or any other name of the URL pattern
+LOGIN_REDIRECT_URL = 'base'  
+LOGOUT_REDIRECT_URL = 'home' 
 
 AUTH_USER_MODEL = 'qusasa.CustomUser'
 
@@ -183,13 +182,10 @@ GRAPH_MODELS ={
 }
 
 INTERNAL_IPS = [
-    # ... your IP here ...
     "127.0.0.1",
-    # ... other IP addresses that should be considered internal ...
 ]
 
 DEBUG_TOOLBAR_PANELS = [
-    # ... default panels ...
     'debug_toolbar.panels.versions.VersionsPanel',
     'debug_toolbar.panels.timer.TimerPanel',
     'debug_toolbar.panels.settings.SettingsPanel',
@@ -202,7 +198,6 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
-    # ... add or remove panels as needed ...
 ]
 
 YOUTUBE_DEVELOPER_KEY = os.environ.get("AIzaSyB5Mi7IXiOBEq5f7nk_kIiq-bVZ6m25rwE")
