@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{% static 'qusasa/css/channel_analysis_output.css' %}" />
     <link rel="stylesheet" href="{% static 'qusasa/css/sections.css' %}" />
 
-
     <link href="https://cdn.rawgit.com/michalsnik/aos/2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdn.rawgit.com/michalsnik/aos/2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -589,8 +588,8 @@
                         <li><a href="#section1"> Download results </a></li>
                         <li><a href="#section2">Overview </a></li>
                         <li><a href="#section3">Deeper understanding </a></li>
-                        <li><a href="#section4">Top videos </a></li>
-                        <li><a href="#section5">Worst videos </a></li>
+                        <li><a href="#section4">Look Closer </a></li>
+                        <li><a href="#section5">Modify Datasets </a></li> 
                         <li><a href="#section6">Ask AI </a></li>
                         <li><a href="#section7">Generate Graphs </a></li>
             
@@ -663,7 +662,7 @@
                 <p data-aos="fade-up">{{ dataset_info.dimensions }}</p>
             {% endfor %}
 
-            <div class="manipulate" style="width: 90%; margin-top:3rem;">
+            <div class="manipulate" style="width: 90%; margin-top:3rem;" id="section5">
                 <h1>Modify Your Datasets</h1>
                 <h3>Need to tweak your datasets? Whether it's removing a column, combining two columns, making formatting adjustments, creating new columns with feature engineering, or anything else you can dream up, we're here to help! Let us know how you'd like to modify your data, and we'll make it happen.</h3>
                 <div class="ask-Ai" style="margin-top: 3rem; display:flex; flex-direction:column;">

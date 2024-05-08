@@ -81,7 +81,6 @@
   width: 100%;
   justify-content: stretch;
 
-
 }
 
 
@@ -104,6 +103,31 @@
 .history .inquery-el {
   width: 100%;
   margin-right: 3rem;
+}
+.inquery-image-container {
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+    margin-left: 1.5%;
+    text-align: center; /* Center-align the image and input */
+    padding: 1.5%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.inquery-image-container img {
+    display: block;
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+    text-align: center; /* Center-align the image and input */
+    transition: transform 0.3s ease;
+    margin-right: 0%;
+}
+
+.inquery-image-container:hover {
+    transform: scale(1.05);
+    cursor: pointer;
 }
   </style>
   <body>
@@ -179,13 +203,30 @@
                                 <!-- Add more fields as necessary -->
                             </div>
                             </p>
-                
+                          </div>
+                          <div class="row">
+                            <div class="inquery-el">
+    
+                                <p><strong>Attached Image:</strong></p>
+                                {% if history.picture %}
+                                <div class="inquery-image-container">
+                                  <a href="{{ history.picture.url }}" target="_blank">
+                                    <img src="{{ history.picture.url }}" alt="Inquiry Picture" style="width: 100px; height: 100px; border-radius: 10px;" />
+                                  </a>
+                                </div>
+                                {% else %}
+                                <div class="inquery-box">No picture attached</div>
+                                {% endif %}
+                            </div>
                         </div>
                         <br>
                         {%if history.status == 'WAITING'%}
                         <div class="output">
                           <form method="post" action=".">
                             {% csrf_token %}
+                            <br>
+                            <p><strong>Response Message:</strong> </p >
+
                             <!-- Manually render the textarea without a label and with custom classes for styling -->
                             <textarea name="RepContent" id="id_RepContent" class="your-custom-class" placeholder="Write response here...">{{ form.RepContent.value|default_if_none:'' }}</textarea>
                             
@@ -193,9 +234,10 @@
                             <button type="submit" class="your-submit-button-class">Resolve Inquiry</button>
                           </form>                    
                                
-                        </div>
+
                         {% else%}
                         <div class="inquery-el" style="margin-top: 0rem;">
+                          <br><br>
                           <p><strong>Response Message:</strong> </p >
                           <div class="inquery-box" style="width: 100%">
                             {{history.RepContent}}
@@ -203,7 +245,8 @@
                         </div>
                        
                         {% endif%}
-                    </div>                </div>
+                    </div>     
+                 </div>
             </div>
             
             
