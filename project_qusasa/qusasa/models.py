@@ -139,3 +139,4 @@ class Inquiry(models.Model):
     date_posted=models.DateTimeField(auto_now_add=True)
     date_resolved=models.DateTimeField(null=True, blank=True)
     author= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to='inquiries/pictures/', null=True, blank=True)

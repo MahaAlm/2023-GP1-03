@@ -218,6 +218,80 @@
     width: 100%;
     margin-right: 3rem;
   }
+  .inquery-image-container {
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+    margin-left: 1.5%;
+    text-align: center; /* Center-align the image and input */
+    padding: 1.5%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.inquery-image-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+    text-align: center; /* Center-align the image and input */
+    transition: transform 0.3s ease;
+}
+
+.inquery-image-container:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+.file-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-button {
+    padding: 8px 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-button:hover {
+    background-color: #0056b3;
+}
+
+#file-chosen {
+    min-width: 200px;
+    padding: 8px;
+}
+
+
+label {
+   cursor: pointer;
+   /* Style as you please, it will become the visible UI component. */
+   padding: 8px 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 2%;
+
+}
+label:hover {
+    background-color: #0056b3;
+}
+
+#upload-photo {
+   opacity: 0;
+   position: absolute;
+   z-index: -1;
+   margin: 2%;
+
+}
+
     </style>
 </head>
 <body>
@@ -248,28 +322,54 @@
               <div class="feature-head">
                   <div class="feature-text">
                       <!-- Adjust the form action to point to your update view URL, including the inquiry's ID -->
-                      <form action="{% url 'update_inquiry' inquiry.id %}" method="post">
-                          {% csrf_token %}
-                          <div class="feature-text">
-                              <h1>Update Inquiry</h1>
-                              <div class="inquiry-el" style="margin-top: 2rem;">
-                                  <p><strong>Title:</strong></p>
-                                  <!-- Pre-populate the input with the current title -->
-                                  <div class="inquery-box" style="width: 100%">
-                                    {{ inquiry.title }}
+                      <form action="{% url 'update_inquiry' inquiry.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="feature-text">
+                          <h1>Update Inquiry</h1>
+                          <div class="inquiry-el" style="margin-top: 2rem;">
+                              <p><strong>Title:</strong></p>
+                              <!-- Pre-populate the input with the current title -->
+                              <div class="inquery-box" style="width: 100%">
+                                {{ inquiry.title }}
+                              </div>
+                          </div>
+                          <div class="inquiry-el" style="margin-top: 2rem;">
+                          <p><strong>Previous Inquery Messages:</strong> </p >
+                            {% for update in updates %}
+                            
+                            <div class="inquery-box" style="width: 100%">
+                              {{update}}
+                            </div>
+
+                            {% endfor %}
+                          </div>
+                              <br>
+                            </div>
+                            <div class="row">
+                              <div class="inquery-el">
+                                  <p><strong>Attached Image:</strong></p>
+                                  <br>
+                                  {% if inquiry.picture %}
+                                  
+                                  <div class="inquery-image-container">
+                                    <a href="{{ inquiry.picture.url }}" target="_blank">
+                                      <img src="{{ inquiry.picture.url }}" alt="Inquiry Picture" style="width: 100px; height: 100px; border-radius: 10px;" />
+                                  </a>
                                   </div>
-                              </div>
-                              <div class="inquiry-el" style="margin-top: 2rem;">
-                              <p><strong>Previous Inquery Messages:</strong> </p >
-                                {% for update in updates %}
+                                  {% else %}
+                                  <div class="inquery-box">No picture attached</div>
+                                  {% endif %}
+                                  <br>
+                                  <p style="margin: 3% 2%;"><strong>Replace the Image:</strong></p>
+
+                                  <label style="margin: 5%" for="upload-photo">Upload Image</label>
+                                  <input type="file" name="new_picture" id="upload-photo" accept="image/*" />
                                 
-                                <div class="inquery-box" style="width: 100%">
-                                  {{update}}
+                                
+                                  
                                 </div>
-
-                                {% endfor %}
                               </div>
-
+                              <br>
                               <div class="inquiry-el" style="margin-top: 2rem;">
                                   <p><strong>Explain your issue:</strong></p>
                                   

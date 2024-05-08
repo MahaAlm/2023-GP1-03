@@ -217,6 +217,26 @@
     width: 100%;
     margin-right: 3rem;
   }
+  .inquery-image-container {
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.inquery-image-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+    text-align: center; /* Center-align the image and input */
+    transition: transform 0.3s ease;
+}
+
+.inquery-image-container:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
     </style>
 </head>
 <body> 
@@ -305,7 +325,24 @@
                                 <!-- Add more fields as necessary -->
                             </div>
                             </p>
-                
+                          </div>
+                          <div class="row">
+                            <div class="inquery-el">
+  
+                                <p><strong>Attached Image:</strong></p>
+                                {% if history.picture %}
+                                <div class="inquery-image-container">
+                                  <a href="{{ history.picture.url }}" target="_blank" style="    width: fit-content; ">
+                                    <img src="{{ history.picture.url }}" alt="Inquiry Picture" style="    width: 100%; 
+                                    max-width: 300px; 
+                                    height: auto; 
+                                    border-radius: 4px;" />
+                                  </a>
+                                </div>
+                                {% else %}
+                                <div class="inquery-box">No picture attached</div>
+                                {% endif %}
+                            </div>
                         </div>
                         <br>
                         {%if history.status == 'WAITING'%}
@@ -324,6 +361,7 @@
                         </div>
                        
                         {% endif%}
+                        
 <br>          <div class="results">
   <div class="object-tools">
     <li>

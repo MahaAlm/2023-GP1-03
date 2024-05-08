@@ -217,9 +217,71 @@
   
   .history .inquery-el {
     width: 100%;
-    margin-right: 3rem;
-  }
+    margin-right: 3rem;}
+
+    #charCount {
+    color: green;
+    font-weight: bold;
+}
+
+#charCount.near-limit {
+    color: orange;
+}
+
+#charCount.limit-reached {
+    color: red;
+}
+
+label {
+   cursor: pointer;
+   /* Style as you please, it will become the visible UI component. */
+   padding: 8px 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 2%;
+}
+label:hover {
+    background-color: #0056b3;
+}
+
     </style>
+        <script>
+          function updateCounter() {
+              const maxChars = 60;
+              const input = document.getElementById('title'); // Change to 'title' if it's an input field
+              const charCount = document.getElementById('charCount');
+              const charsRemaining = maxChars - input.value.length;
+          
+              charCount.textContent = `${charsRemaining} `;
+          
+              // Update styles based on characters remaining
+              if (charsRemaining <= 10) {
+                  charCount.className = 'near-limit';
+              } else {
+                  charCount.className = '';
+              }
+              if (charsRemaining <= 0) {
+                  charCount.className = 'limit-reached';
+              }
+          }
+          document.addEventListener('DOMContentLoaded', updateCounter);
+          
+          function previewImage() {
+        var file = document.getElementById('upload-photo').files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var displayImage = document.getElementById('display-image');
+            displayImage.src = e.target.result;
+            displayImage.style.display = 'block';  // Make the image visible by changing the display property
+        }
+        reader.readAsDataURL(file);
+    }
+    
+          </script>    
 </head>
 <body> 
 
@@ -255,20 +317,30 @@
             <div class="feature-head">
                 <div class="feature-text">
 
-                    <form action="{% url 'add_inquiry' %}" method="post">
-                        {% csrf_token %}
+                  <form action="{% url 'add_inquiry' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                         <div class="feature-text">
                             <h1>Add Inquiry</h1>
                             <div class="inquery-el" style="margin-top: 3rem;">
                                 <p><strong>title:</strong></p>
                                 <!-- Ensure the textarea has a name attribute -->
-                                <input class="inquery-box" style="width: 100%; height: 1.2rem;" name="title"/>
+                                <input class="inquery-box" style="width: 100%; height: 1.2rem;" id='title' name="title" maxlength="60" oninput="updateCounter()"/>
+                                <span id="charCount">60</span> characters remaining
                             </div>
                             <div class="inquery-el" style="margin-top: 3rem;">
                                 <p><strong>Explain your issue:</strong></p>
                                 <!-- Ensure the textarea has a name attribute -->
                                 <textarea class="inquery-box" style="width: 100%" name="inq_content"></textarea>       
                             </div>
+                            <div class="inquery-el" style="margin-top: 3rem;">
+                              <p><b>Add an Image</b></p>
+                              <br>
+                              <label for="upload-photo">Upload Image</label>
+                              <input type="file" name="picture" id="upload-photo" accept="image/*" style="display: none;" onchange="previewImage();" />
+                              <br><br>
+                              <img id="display-image" alt="Image will be displayed here after uploading." style="margin: 3.5%; display: none;  width: 100px; height: 100px; border-radius: 10px;"/>
+                              </div>
+
                             <button type="submit">Submit Inquiry</button>
                         </div>
                     </form>

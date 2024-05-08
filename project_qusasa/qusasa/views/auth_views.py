@@ -143,26 +143,37 @@ def user_inquiries_view(request):
     return render(request, 'qusasa/user_inquiries.html', context)
 
 def add_inquiry(request):
-    
+
     if request.method == "POST":
+        # Fetch text data from the form
         title = request.POST.get('title', '') 
         inq_content = request.POST.get('inq_content', '')
-        
-        status = 'WAITING'
-        # Create the new Inquiry instance
+
+        # Create a new Inquiry instance
         new_inquiry = Inquiry(
             title=title,
             InqContent=inq_content,
             RepContent='', 
-            status=status,
+            status='WAITING',
             date_posted=timezone.now(),
             author=request.user
         )
+
         # Save the new inquiry
         new_inquiry.save()
-        
-        # Redirect to a new URL after saving:
-        return redirect('user_inquiries')  # Redirect to an appropriate view after saving
+
+        # Fetch and assign the uploaded image and file
+        uploaded_image = request.FILES.get('picture')
+        print('hi')
+        if uploaded_image:
+            print("Image received:", uploaded_image.name)  # Log the image name
+            new_inquiry.picture = uploaded_image
+        new_inquiry.save()  # Save again to store the uploads
+
+        # Redirect to an appropriate view after saving
+        return redirect('user_inquiries')
+
+    return render(request, 'qusasa/add_inquiry.html')  # Redirect to an appropriate view after saving
 
     return render(request, 'qusasa/add_inquiry.html')
 
@@ -178,7 +189,14 @@ def update_inquiry(request, inquiry_id):
             inquiry.InqContent += "\n\n\t\n\n, "+new_content+"\n"+str(dateformat.format(timezone.localtime(timezone.now()),'Y-m-d ',))
             inquiry.status='WAITING'
 
-
+        
+        new_picture = request.FILES.get('new_picture')
+        if new_picture:
+            # Check if the new picture is not None
+            print('New picture uploaded:', new_picture.name)
+            inquiry.picture = new_picture
+        else:
+            print('No new picture uploaded.')
         # Save the updated inquiry
         inquiry.save()
         
