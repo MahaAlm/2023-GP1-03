@@ -16,7 +16,6 @@ from pandasai.llm.openai import OpenAI
 import os
 
 openai_api_key = os.environ.get("OPENAI_API_KEY")
-openai_api_key = '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'
 
 
 def chat_with_csv(df,prompt):

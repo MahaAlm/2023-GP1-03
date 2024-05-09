@@ -8,7 +8,6 @@ from instagrapi import Client
 import torch
 import pandas as pd
 from collections import Counter
-from transformers import pipeline, BertTokenizer, AutoModelForSequenceClassification
 from keybert import KeyBERT
 import os
 import time

@@ -17,7 +17,7 @@ from django.core.exceptions import ValidationError
 import re
 import os
 from django.conf import settings
-#from decouple import config
+from decouple import config
 from ..models import TopicAnalysisHistory
 import pandas as pd
 from .auth_views import *
@@ -341,7 +341,7 @@ class VideoAnalysisWizard(SessionWizardView):
         youtube = get_youtube_client()
         cleaned_data = self.get_all_cleaned_data()
         video_url = cleaned_data.get('video_url')
-        openai_api_key = config('OPENAI_API_KEY')
+        openai_api_key = os.environ.get('OPENAI_API_KEY')
 
         history_id = self.kwargs.get('history_id')
         if history_id:
@@ -690,14 +690,7 @@ class ChannelAnalysisWizard(SessionWizardView):
     
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
-        history_id = self.kwargs.get('history_id')
-
-        if history_id and step == '0':  # Assuming '0' is the step of ChannelAnalysisInputForm
-            history = get_object_or_404(ChannelAnalysisHistory, id=history_id, user=self.request.user)
-            initial.update({
-                'channel_url': history.channel_url,
-                # Add other fields here as necessary
-            })
+        
         return initial
     
     def done(self, form_list, **kwargs):
@@ -706,20 +699,7 @@ class ChannelAnalysisWizard(SessionWizardView):
         cleaned_data = self.get_all_cleaned_data()
         channel_url = cleaned_data.get('channel_url')
         
-        history_id = self.kwargs.get('history_id')
-        if history_id:
-            # Update the existing history record
-            history = get_object_or_404(ChannelAnalysisHistory, id=history_id, user=self.request.user)
-            history.channel_url = cleaned_data.get('channel_url')
-            # Update other fields as necessary
-            history.save()
-        else:
-            # Create a new history record
-            ChannelAnalysisHistory.objects.create(
-                user=self.request.user,
-                channel_url=cleaned_data.get('channel_url'),
-                # Add other fields as necessary
-            )
+    
         channel_id = extractIdFromUrl(channel_url)
         channel_df, all_videos_df, all_playlists_df, top_3_videos, worst_3_videos, top_3_comments_analysis, worst_3_comments_analysis = analyze_channel(youtube, channel_id)
         if 'engagementScore' in all_videos_df.columns:
@@ -733,6 +713,7 @@ class ChannelAnalysisWizard(SessionWizardView):
         self.request.session['all_playlists_dict'] = all_playlists_df.to_dict(orient='records')
 
         self.request.session['all_playlists_csv'] = all_playlists_csv
+        self.request.session['channel_url'] = channel_url
 
         self.request.session['title'] = channel_df['Channel Name'].iloc[0]
         self.request.session['description'] = channel_df['description'].iloc[0]
@@ -800,8 +781,6 @@ def channel_analysis_output_view(request):
         'totalLikes': request.session['totalLikes'],
         'totalComments': request.session['totalComments'],
         'mostUsedCategories': request.session['mostUsedCategories'],
-
-
     }
     
     if('top_5_comments_analysis_dist' in request.session): 
@@ -866,6 +845,8 @@ def channel_analysis_output_view(request):
             'dimensions': f"{all_playlists_df.shape[0]} row x {all_playlists_df.shape[1] } column"
         }
     }
+    
+
 
     context= { 'datasets': datasets,
         'json_data': json_data,
@@ -901,7 +882,7 @@ def channel_analysis_output_view(request):
         context['worst_5_comments_analysis_dist'] = worst_5_comments_analysis_dist
         context['worst_5_comments'] = worst_5_comments
     
-        
+    
     
     return render(request, 'features_pages/channel_analysis/channel_analysis_output.html', context)
 
@@ -926,8 +907,124 @@ def channel_dataset_zipped_output(request):
 
     return response
 
+def save_results_channel_analysis(request):
+    
+    if request.method == 'POST':
 
+        context= {'top_5_videos': request.session.get('top_5_videos', []),
+            'worst_5_videos': request.session.get('worst_5_videos', []),
+            'title': request.session['title'],
 
+            'description': request.session['description'],
+            'thumbnail': request.session['thumbnail'],
+            'average_duration': request.session['average_duration'],
+            'uniqueTags': request.session.get('uniqueTags', []),
+            'videos_publishedAt': request.session.get('videos_publishedAt', []),
+            'videos_duration': request.session.get('videos_duration', []),
+            'videos_likes': request.session.get('videos_likes', []),
+            'videos_views': request.session.get('videos_views', []),
+            'videos_commentCount': request.session.get('videos_commentCount', []),
+            'all_playlists_dict': request.session.get('all_playlists_dict', []),
+            'videoCount': request.session.get('videoCount', 0),
+            'totalViews': request.session.get('totalViews', 0),
+            'totalLikes': request.session.get('totalLikes', 0),
+            'totalComments': request.session.get('totalComments', 0),
+            'mostUsedCategories': request.session.get('mostUsedCategories', []),
+            'channel_df_csv': request.session.get('channel_df_csv', ''),
+            'all_videos_info_csv': request.session.get('all_videos_info_csv', ''),
+            'all_playlists_csv': request.session.get('all_playlists_csv', '')
+                }
+        
+        if('top_5_comments_analysis_dist' in request.session): 
+            top_5_comments_analysis_dist = request.session['top_5_comments_analysis_dist']
+            top_5_comments = request.session['top_5_comments']
+            context['top_5_comments_analysis_dist'] = top_5_comments_analysis_dist
+            context['top_5_comments'] = top_5_comments
+
+        if('worst_5_comments_analysis_dist' in request.session): 
+            worst_5_comments_analysis_dist = request.session['worst_5_comments_analysis_dist']
+            worst_5_comments = request.session['worst_5_comments']
+            context['worst_5_comments_analysis_dist'] = worst_5_comments_analysis_dist
+            context['worst_5_comments'] = worst_5_comments
+    
+        
+        # Additional fields can be added as needed
+        history = ChannelAnalysisHistory(
+            user=request.user,
+            channel_url=request.session.get('channel_url', ''),
+            analysis_data=context
+        )
+        history.save()
+        
+        request.session['history_id'] = history.id
+
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def set_session_channel_analysis(request, history_id):
+    # Retrieve the history object for the given ID and ensure it belongs to the current user
+    history = get_object_or_404(ChannelAnalysisHistory, id=history_id, user=request.user)
+    
+    # Assuming the history data is stored as JSON in a field called 'analysis_data'
+    data = history.analysis_data
+    request.session['history_id'] = history.id
+    # Setting session variables from the history data
+    request.session['top_5_videos'] = data.get('top_5_videos', [])
+    request.session['worst_5_videos'] = data.get('worst_5_videos', [])
+    request.session['uniqueTags'] = data.get('uniqueTags', [])
+    request.session['videos_publishedAt'] = data.get('videos_publishedAt', [])
+    request.session['videos_duration'] = data.get('videos_duration', [])
+    request.session['videos_likes'] = data.get('videos_likes', [])
+    request.session['videos_views'] = data.get('videos_views', [])
+    request.session['videos_commentCount'] = data.get('videos_commentCount', [])
+    request.session['all_playlists_dict'] = data.get('all_playlists_dict', [])
+    request.session['videoCount'] = data.get('videoCount', 0)
+    request.session['totalViews'] = data.get('totalViews', 0)
+    request.session['totalLikes'] = data.get('totalLikes', 0)
+    request.session['totalComments'] = data.get('totalComments', 0)
+    request.session['mostUsedCategories'] = data.get('mostUsedCategories', [])
+    request.session['channel_df_csv'] = data.get('channel_df_csv', '')
+    request.session['all_videos_info_csv'] = data.get('all_videos_info_csv', '')
+    request.session['all_playlists_csv'] = data.get('all_playlists_csv', '')
+    request.session['description'] = data.get("description", '')
+    request.session['thumbnail'] = data.get('thumbnail', '')
+    request.session['average_duration'] = data.get('average_duration', 0)
+    request.session['channel_url'] = history.channel_url  # Assuming you might need the channel URL as well
+    request.session['title'] = data.get('ttile', '')
+
+    # Redirect to the output view with all these variables now set in the session
+    return redirect('channel_analysis_output')  # Ensure 'channel_analysis_output' is the correct URL name for your output view
+
+from ..tasks import perform_channel_analysis
+from ..forms import ScheduleForm
+
+def schedule_channel_analysis_form(request):
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST)
+        if form.is_valid():
+            history_id = request.session.get('history_id', [])
+            scheduled_analysis = form.save(commit=False)
+            scheduled_analysis.user = request.user
+            scheduled_analysis.save()
+
+            
+            
+
+            
+            
+            perform_channel_analysis.delay(history_id, scheduled_analysis.id)
+            print('analysis scheduled')
+            return redirect('base')
+
+    else:
+        form = ScheduleForm()
+
+    return render(request, 'features_pages/channel_analysis/schedule_channel_analysis_form.html', {'form': form})
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 #Topic_Analysis
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------

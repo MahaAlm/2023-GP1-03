@@ -51,6 +51,38 @@
         .compare-stats p {
             width: 100%;
         }
+        nav {
+    background-color: #5f4e9c; /* Light purple background color */
+    padding: 10px;
+    border-radius: 10px; /* Rounded edges */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px; /* Adjust spacing between links */
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white; /* Default color */
+}
+
+nav ul li a:hover {
+    color: purple; /* Color change on hover */
+}
+
+/* Style for the separator "|" */
+nav ul li:not(:last-child)::after {
+    content: "|";
+    margin-left: 5px;
+    margin-right: 2px;
+}
 
 
     </style>
@@ -66,13 +98,24 @@
             <div class="output-header " data-aos="fade-up">
                 <h1>Analysis Complete!</h1>
                 <p>Video summary and audience engagement insights are now available. Explore the sections below to gain insights into the video's performance and audience interaction.</p>
+                <nav>
+                    <ul>
+                        <li><a href="#section1"> Download results </a></li>
+                        <li><a href="#section2">Video Summary </a></li>
+                        <li><a href="#section3">Overview </a></li>
+                        <li><a href="#section5">Modify Datasets </a></li> 
+                        <li><a href="#section6">Ask AI </a></li>
+                        <li><a href="#section7">Generate Graphs </a></li>
+            
+                    </ul>
+                </nav>
             </div>
         </div>
         
         
         
 
-        <div class="mini-container">
+        <div class="mini-container" id="section1">
             <h2 data-aos="fade-up">Download the results:</h2>
             <div class="downlaodables" data-aos="fade-up">
             <div class="download-dataset download-el">
@@ -107,7 +150,7 @@
             </div>
 
         </div>
-        <div class="top-videos" data-aos="fade-up">
+        <div class="top-videos" data-aos="fade-up" id="section2">
             
             <div class="videos">
                 <div class="mini-container">
@@ -142,7 +185,7 @@
                             </div>
                         </div>
                         
-                        <div class="stats-graphs" data-aos="fade-up">
+                        <div class="stats-graphs" data-aos="fade-up" id="section3">
                             <h1>Get An Overview</h1>
                             <p>take a look over the video user engagement</p>
                             <div class="overview">

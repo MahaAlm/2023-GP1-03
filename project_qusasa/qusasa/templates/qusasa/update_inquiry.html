@@ -224,7 +224,7 @@
     width: fit-content;
     margin-left: 1.5%;
     text-align: center; /* Center-align the image and input */
-    padding: 1.5%;
+    padding: 1%;
     transition: transform 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -232,7 +232,7 @@
 .inquery-image-container img {
     display: block;
     width: 100%;
-    height: auto;
+    height: fit-content;
     text-align: center; /* Center-align the image and input */
     transition: transform 0.3s ease;
 }
@@ -293,6 +293,7 @@ label:hover {
 }
 
     </style>
+
 </head>
 <body>
   <!-- Logout Link -->
@@ -363,7 +364,10 @@ label:hover {
                                   <p style="margin: 3% 2%;"><strong>Replace the Image:</strong></p>
 
                                   <label style="margin: 5%" for="upload-photo">Upload Image</label>
-                                  <input type="file" name="new_picture" id="upload-photo" accept="image/*" />
+                                  <input type="file" name="new_picture" id="upload-photo" accept="image/*" onchange="previewImage();"/>
+                                  <br><br>
+                                  <img id="display-image" alt="Image will be displayed here after uploading." style="margin: 3.5%; display: none;  width: 100px; height: 100px; border-radius: 10px;"/>
+    
                                 
                                 
                                   
@@ -387,6 +391,16 @@ label:hover {
   <!-- JavaScript for Interactive Elements -->
   <script src="{% static 'qusasa/js/script.js' %}"></script>
   <script>
+              function previewImage() {
+        var file = document.getElementById('upload-photo').files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var displayImage = document.getElementById('display-image');
+            displayImage.src = e.target.result;
+            displayImage.style.display = 'block';  // Make the image visible by changing the display property
+        }
+        reader.readAsDataURL(file);
+    }
       document.querySelector('.hamburger').addEventListener('click', function(e) {
           let navs = document.querySelector('.side-nav');
 

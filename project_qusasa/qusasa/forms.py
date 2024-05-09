@@ -616,3 +616,17 @@ class InquiryForm(forms.ModelForm):
     class Meta:
         model = Inquiry
         fields = ['RepContent']
+        
+        
+from django import forms
+from .models import ScheduledAnalysis
+
+class ScheduleForm(forms.ModelForm):
+    class Meta:
+        model = ScheduledAnalysis
+        fields = ['start_on', 'frequency', 'number_of_times']
+        widgets = {
+            'start_on': forms.DateTimeInput(attrs={'class': 'datetime-input', 'type': 'date'}),
+            'frequency': forms.Select(attrs={'class': 'select-input'}),
+            'number_of_times': forms.NumberInput(attrs={'class': 'number-input'}),
+        }

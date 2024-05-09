@@ -37,7 +37,41 @@
 
     <script src="https://kit.fontawesome.com/b50b47369c.js" crossorigin="anonymous"></script>
     <link rel="shortcut icon" href="{% static 'qusasa/images/Qusasa end.png' %}" type="image/png">
+    <style>
+        nav {
+    background-color: #5f4e9c; /* Light purple background color */
+    padding: 10px;
+    border-radius: 10px; /* Rounded edges */
+}
 
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px; /* Adjust spacing between links */
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white; /* Default color */
+}
+
+nav ul li a:hover {
+    color: purple; /* Color change on hover */
+}
+
+/* Style for the separator "|" */
+nav ul li:not(:last-child)::after {
+    content: "|";
+    margin-left: 5px;
+    margin-right: 2px;
+}
+
+</style>
   </head>
   <body>
     
@@ -50,10 +84,22 @@
             <div class="output-header " data-aos="fade-up">
                 <h1>Your Playlist Analysis is ready!</h1>
                 <p>Our playlist analysis will give you an overview over the playlist, what does influence its performance, and a closer look on its top and worst performing videos...</p>
+                <nav>
+                    <ul>
+                        <li><a href="#section1">Download results </a></li>
+                        <li><a href="#section2">Overview </a></li>
+                        <li><a href="#section3">Deeper understanding </a></li>
+                        <li><a href="#section4">Look closer</a></li>
+                        <li><a href="#section5">Modify Datasets </a></li> 
+                        <li><a href="#section6">Ask AI </a></li>
+                        <li><a href="#section7">Generate Graphs </a></li>
+            
+                    </ul>
+                </nav>
             </div>
         </div>
         
-        <div class="mini-container">
+        <div class="mini-container" id="section1">
             <h2 data-aos="fade-up">Download your results:</h2>
             <div class="downlaodables" data-aos="fade-up">
             <div class="download-dataset download-el">
@@ -89,7 +135,7 @@
 
         </div>
 
-        <div class="mini-container stats-graphs-container">
+        <div class="mini-container stats-graphs-container" id="section2">
             <div class="stats-graphs" data-aos="fade-up">
                 <h1>Get An Overview</h1>
                 <p>take a look over playlist in general, what is it about and how is it performing</p>
@@ -144,7 +190,7 @@
             </div>
         </div>
         
-        <div class="mini-container stats-graphs-container">
+        <div class="mini-container stats-graphs-container" id="section3">
             <div class="stats-graphs" data-aos="fade-up">
                 <h1>Get a deeper understanding</h1>
                 <div class="overview">
@@ -250,7 +296,7 @@
             </div>
         </div>
 
-        <div class="top-videos" data-aos="fade-up">
+        <div class="top-videos" data-aos="fade-up" id="section4">
             <h1 data-aos="fade-up">Look closer</h1>
             <p data-aos="fade-up">observe the top and worst performing videos on the playlist to have a closer look on the people opinions and engagement with the content</p>
             <div class="videos" >
