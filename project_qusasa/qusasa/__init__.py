@@ -1,2 +1,2 @@
-default_app_config = 'qusasa.apps.YourAppConfig' 
+default_app_config = 'qusasa.apps.QusasaConfig'
 

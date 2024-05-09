@@ -107,6 +107,7 @@
     align-content: center;
     background: linear-gradient(rgba(10, 63, 64, 0.064), rgba(37, 189, 151, 0.788));
 border-radius: 30px;
+width: 80%;
 
 }
 
@@ -145,6 +146,7 @@ border-radius: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 .videos{

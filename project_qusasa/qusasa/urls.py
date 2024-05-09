@@ -58,6 +58,9 @@ urlpatterns = [
     path('channel_analysis_redo/<int:history_id>', views.ChannelAnalysisWizard.as_view(), name='channel_analysis_redo'),
     path('channel_analysis/output/', views.channel_analysis_output_view, name='channel_analysis_output'),
     path('dataset_zipped_output_channel/', views.channel_dataset_zipped_output, name='channel_dataset_zipped_output'),  
+    path('save_results_channel_analysis/', views.save_results_channel_analysis, name='save_results_channel_analysis'),
+    path('set_session_channel_analysis/<int:history_id>/', views.set_session_channel_analysis, name='set_session_channel_analysis'),
+    path('schedule_channel_analysis_form', views.schedule_channel_analysis_form, name='schedule_channel_analysis_form'),
     
     path('topic_analysis_details', views.topic_analysis_details, name='topic_analysis_details'),
     path('topic_analysis_detail/<int:history_id>/', views.topic_analysis_detail, name='topic_analysis_detail'),
