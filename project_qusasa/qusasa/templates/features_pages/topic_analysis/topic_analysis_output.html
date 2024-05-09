@@ -151,7 +151,38 @@
 .medium-card {
     height: auto;
 }
+nav {
+    background-color: #5f4e9c; /* Light purple background color */
+    padding: 10px;
+    border-radius: 10px; /* Rounded edges */
+}
 
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px; /* Adjust spacing between links */
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white; /* Default color */
+}
+
+nav ul li a:hover {
+    color: purple; /* Color change on hover */
+}
+
+/* Style for the separator "|" */
+nav ul li:not(:last-child)::after {
+    content: "|";
+    margin-left: 5px;
+    margin-right: 2px;
+}
   </style>
   <body>
     
@@ -164,10 +195,21 @@
             <div class="output-header " data-aos="fade-up">
                 <h1>Your topic analysis is ready!</h1>
                 <p>Check out the metrics and insights to dive into the trends and discussions around your chosen subject.</p>
-            </div>
+                <nav>
+                  <ul>
+                      <li><a href="#section1">Download Results </a></li>
+                      <li><a href="#section2">Trending Videos </a></li>
+                      <li><a href="#section3">Topic Analytics </a></li>
+                      <li><a href="#section5">Modify Datasets </a></li> 
+                      <li><a href="#section6">Ask AI </a></li>
+                      <li><a href="#section7">Generate Graphs </a></li>
+          
+                  </ul>
+              </nav>
+              </div>
         </div>
         
-        <div class="mini-container">
+        <div class="mini-container" id="section1">
             <h2 data-aos="fade-up">Download your results:</h2>
         <div class="downlaodables" data-aos="fade-up">
             <div class="download-dataset download-el">
@@ -204,7 +246,7 @@
         </div>
         
 
-        <div class="mini-container">
+        <div class="mini-container" id="section2">
             <div class="output-header " data-aos="fade-up">
                 <h1>
                     Take a look at the top 5 trending videos on your topic</h1>
@@ -232,7 +274,7 @@
                 </div>
             </div>
         </div>
-        <h1 data-aos="fade-up">Topic Analytics</h1>
+        <h1 data-aos="fade-up" id="section3">Topic Analytics</h1>
         <p data-aos="fade-up"> Enhance your understanding with our topic analysis.</p>
        
       

@@ -35,6 +35,42 @@
     <script src="https://kit.fontawesome.com/b50b47369c.js" crossorigin="anonymous"></script>
     <link rel="shortcut icon" href="{% static 'qusasa/images/Qusasa end.png' %}" type="image/png">
 
+    <style>
+            nav {
+        background-color: #5f4e9c; /* Light purple background color */
+        padding: 10px;
+        border-radius: 10px; /* Rounded edges */
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    nav ul li {
+        display: inline;
+        margin-right: 10px; /* Adjust spacing between links */
+    }
+
+    nav ul li a {
+        text-decoration: none;
+        color: white; /* Default color */
+    }
+
+    nav ul li a:hover {
+        color: purple; /* Color change on hover */
+    }
+
+    /* Style for the separator "|" */
+    nav ul li:not(:last-child)::after {
+        content: "|";
+        margin-left: 5px;
+        margin-right: 2px;
+    }
+
+
+    </style>
   </head>
   <body>
     
@@ -47,10 +83,22 @@
             <div class="output-header " data-aos="fade-up">
                 <h1>Your Competitive Analysis is ready!</h1>
                 <p>Our youtube competitive analysis will provide you with customizable dataset, statistics, graphs and interpretaions to make your work with data easier.</p>
+                <nav>
+                    <ul>
+                        <li><a href="#section1">Download results </a></li>
+                        <li><a href="#section2">Overview </a></li>
+                        <li><a href="#section3">Top videos </a></li>
+                        <li><a href="#section4">More insights </a></li>
+                        <li><a href="#section5">Modify Datasets </a></li> 
+                        <li><a href="#section6">Ask AI </a></li>
+                        <li><a href="#section7">Generate Graphs </a></li>
+            
+                    </ul>
+                </nav>
             </div>
         </div>
         
-        <div class="mini-container">
+        <div class="mini-container" >
             <div class="youtube-channels" data-aos="fade-up">
                 <h3>Analysed {{type}}s</h3>
                 <div class="channels-container">
@@ -68,7 +116,7 @@
         </div>
         
 
-        <div class="mini-container">
+        <div class="mini-container" id="section1">
             <h2 data-aos="fade-up">Download your results:</h2>
         <div class="downlaodables" data-aos="fade-up">
             <div class="download-dataset download-el">
@@ -104,10 +152,10 @@
 
         </div>
         
-        <div class="mini-container stats-graphs-container">
+        <div class="mini-container stats-graphs-container" id="section2">
             <div class="stats-graphs" data-aos="fade-up">
                 <h1>Get An Overview</h1>
-                <p>take a look over the general likes, views, and subscribtions for each {{ type }}</p>
+                <p>take a look over the general likes, views, and subscriptions for each {{ type }}</p>
                 <div class="overview">
                     <div class="owl-carousel">
                         <div class="item">
@@ -169,7 +217,7 @@
             </div>
         </div>
 
-        <div class="top-videos" data-aos="fade-up">
+        <div class="top-videos" data-aos="fade-up" id="section3">
             <h1 data-aos="fade-up">Top videos</h1>
             <p data-aos="fade-up"> here we display the top video of each channel, you can hover on each video to get more insights about why is it so successfull!</p>
             <div class="videos">
@@ -221,7 +269,7 @@
         </div>
 
 
-        <div class="mini-container stats-graphs-container" data-aos="fade-up">
+        <div class="mini-container stats-graphs-container" data-aos="fade-up" id="section4">
             <div class="stats-graphs" data-aos="fade-up">
                 <h1>Get more insights</h1>
                 <p class="stats-graphs-p">We present you with some graphs that could help you in understanding your competition better</p>
