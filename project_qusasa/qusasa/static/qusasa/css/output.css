@@ -719,6 +719,11 @@ margin-bottom: 3rem;}
 
 .schedule-container {
     width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
 }
 
 .schedule-container p {

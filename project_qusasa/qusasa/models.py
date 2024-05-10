@@ -87,6 +87,8 @@ class PlaylistAnalysisHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     playlist_url = models.URLField(max_length=2048)
     created_at = models.DateTimeField(auto_now_add=True)
+    analysis_data = models.JSONField(blank=True, null=True)
+
 
 class ChannelAnalysisHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

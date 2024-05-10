@@ -488,19 +488,7 @@ class PlaylistAnalysisWizard(SessionWizardView):
         cleaned_data = self.get_all_cleaned_data()
         plsylist_url = cleaned_data.get('playlist_url')
         
-        history_id = self.kwargs.get('history_id')
-        if history_id:
-            # Update the existing history record
-            history = get_object_or_404(PlaylistAnalysisHistory, id=history_id, user=self.request.user)
-            history.playlist_url = cleaned_data.get('playlist_url')
-            # Update other fields as necessary
-            history.save()
-        else:
-            PlaylistAnalysisHistory.objects.create(
-            user=self.request.user,
-            playlist_url=cleaned_data.get('playlist_url'),
-            # Add other fields as necessary
-            )
+        
         
         playlist_id = extractIdFromUrl(plsylist_url)
         playlist_info_df, all_videos_info_df, top_5_videos, worst_5_videos, top_5_comments_analysis, worst_5_comments_analysis = analyze_playlist(youtube, playlist_id)
@@ -665,6 +653,133 @@ def playlist_dataset_zipped_output(request):
     response['Content-Disposition'] = 'attachment; filename="playlist_analysis_datasets.zip"'
 
     return response
+
+
+
+def save_results_playlist_analysis(request):
+    
+    if request.method == 'POST':
+        
+    
+            
+        
+        context = {
+            'top_5_videos': request.session['top_5_videos'],
+            'worst_5_videos': request.session['worst_5_videos'],
+            'uniqueTags': request.session['uniqueTags'],
+            'videos_publishedAt': request.session['videos_publishedAt'],
+            'videos_duration': request.session['videos_duration'],
+            'videos_likes': request.session['videos_likes'],
+            'videos_views': request.session['videos_views'],
+            'videos_commentCount': request.session['videos_commentCount'],
+                
+                'title': request.session['title'],
+                'description': request.session['description'],
+                'thumbnail': request.session['thumbnail'],
+                'videoCount': request.session['videoCount'],
+                'totalViews': request.session['totalViews'],
+                'totalLikes': request.session['totalLikes'],
+                'totalComments': request.session['totalComments'],
+                'average_duration': request.session['average_duration'],
+                'uniqueTags': request.session['uniqueTags'],
+                'videos_publishedAt': request.session['videos_publishedAt'],
+                'videos_duration': request.session['videos_duration'],
+                'videos_likes': request.session['videos_likes'],
+                'videos_views': request.session['videos_views'],
+                'videos_commentCount': request.session['videos_commentCount'],
+        }
+        if('top_5_comments_analysis_dist' in request.session): 
+            top_5_comments_analysis_dist = request.session['top_5_comments_analysis_dist']
+            top_5_comments = request.session['top_5_comments']
+            context['top_5_comments_analysis_dist'] = top_5_comments_analysis_dist
+            context['top_5_comments'] = top_5_comments
+
+        if('worst_5_comments_analysis_dist' in request.session): 
+            worst_5_comments_analysis_dist = request.session['worst_5_comments_analysis_dist']
+            worst_5_comments = request.session['worst_5_comments']
+            context['worst_5_comments_analysis_dist'] = worst_5_comments_analysis_dist
+            context['worst_5_comments'] = worst_5_comments
+
+            
+        # Additional fields can be added as needed
+        history = PlaylistAnalysisHistory(
+            user=request.user,
+            playlist_url=request.session.get('playlist_url', ''),
+            analysis_data=context
+        )
+        history.save()
+        
+        request.session['history_id'] = history.id
+
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def set_session_playlist_analysis(request, history_id):
+    # Retrieve the history object for the given ID and ensure it belongs to the current user
+    history = get_object_or_404(PlaylistAnalysisHistory, id=history_id, user=request.user)
+    
+    # Assuming the history data is stored as JSON in a field called 'analysis_data'
+    data = history.analysis_data
+    request.session['history_id'] = history.id
+    
+
+
+    # Setting session variables from the history data
+    request.session['top_5_videos'] = data.get('top_5_videos', [])
+    request.session['worst_5_videos'] = data.get('worst_5_videos', [])
+    request.session['uniqueTags'] = data.get('uniqueTags', [])
+    request.session['videos_publishedAt'] = data.get('videos_publishedAt', [])
+    request.session['videos_duration'] = data.get('videos_duration', [])
+    request.session['videos_likes'] = data.get('videos_likes', [])
+    request.session['videos_views'] = data.get('videos_views', [])
+    request.session['videos_commentCount'] = data.get('videos_commentCount', [])
+
+    if 'top_5_comments_analysis_dist' in data:
+        request.session['top_5_comments_analysis_dist'] = data['top_5_comments_analysis_dist']
+        request.session['top_5_comments'] = data['top_5_comments']
+
+    if 'worst_5_comments_analysis_dist' in data:
+        request.session['worst_5_comments_analysis_dist'] = data['worst_5_comments_analysis_dist']
+        request.session['worst_5_comments'] = data['worst_5_comments']
+
+    request.session['title'] = data.get('title', '')
+    request.session['description'] = data.get('description', '')
+    request.session['thumbnail'] = data.get('thumbnail', '')
+    request.session['playlist_publishedAt'] = data.get('playlist_publishedAt', '')
+    request.session['videoCount'] = data.get('videoCount', 0)
+    request.session['totalViews'] = data.get('totalViews', 0)
+    request.session['totalLikes'] = data.get('totalLikes', 0)
+    request.session['totalComments'] = data.get('totalComments', 0)
+    request.session['average_duration'] = data.get('average_duration', 0)
+
+    # Redirect to the output view with all these variables now set in the session
+    return redirect('playlist_analysis_output')  # Ensure 'channel_analysis_output' is the correct URL name for your output view
+
+from ..tasks import perform_playlist_analysis
+from ..forms import ScheduleForm
+
+def schedule_playlist_analysis_form(request):
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST)
+        if form.is_valid():
+            history_id = request.session.get('history_id', [])
+            scheduled_analysis = form.save(commit=False)
+            scheduled_analysis.user = request.user
+            scheduled_analysis.save()
+
+            perform_playlist_analysis.delay(history_id, scheduled_analysis.id)
+            print('analysis scheduled')
+            return redirect('base')
+
+    else:
+        form = ScheduleForm()
+
+    return render(request, 'features_pages/playlist_analysis/schedule_playlist_analysis_form.html', {'form': form})
 
 
 
@@ -914,7 +1029,7 @@ def save_results_channel_analysis(request):
         context= {'top_5_videos': request.session.get('top_5_videos', []),
             'worst_5_videos': request.session.get('worst_5_videos', []),
             'title': request.session['title'],
-
+            'publishedAt': request.session['publishedAt'],
             'description': request.session['description'],
             'thumbnail': request.session['thumbnail'],
             'average_duration': request.session['average_duration'],
@@ -996,6 +1111,8 @@ def set_session_channel_analysis(request, history_id):
     request.session['average_duration'] = data.get('average_duration', 0)
     request.session['channel_url'] = history.channel_url  # Assuming you might need the channel URL as well
     request.session['title'] = data.get('ttile', '')
+    print(data.get('publishedAt', ''))
+    request.session['publishedAt'] = data.get('publishedAt', '')
 
     # Redirect to the output view with all these variables now set in the session
     return redirect('channel_analysis_output')  # Ensure 'channel_analysis_output' is the correct URL name for your output view

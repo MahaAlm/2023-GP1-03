@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.core.mail import send_mail
-from .models import ChannelAnalysisHistory, ScheduledAnalysis
-from .utils import get_youtube_client, analyze_channel, extractIdFromUrl
+from .models import ChannelAnalysisHistory, ScheduledAnalysis, PlaylistAnalysisHistory
+from .utils import get_youtube_client, analyze_channel, extractIdFromUrl, analyze_playlist
 from celery.utils.log import get_task_logger
 import json
 from datetime import datetime, timedelta
@@ -179,6 +179,160 @@ def perform_channel_analysis(history_id, scheduled_analysis_id):
                 perform_channel_analysis.apply_async((history_id, scheduled_analysis.id), eta=eta)
 
         except ChannelAnalysisHistory.DoesNotExist:
+            logger.error(f"History record with ID {history_id} does not exist.")
+        except ScheduledAnalysis.DoesNotExist:
+            logger.error(f"ScheduledAnalysis record with ID {scheduled_analysis_id} does not exist.")
+        except Exception as e:
+            logger.error(f"Error performing channel analysis: {str(e)}")
+    
+
+
+
+def prepare_analysis_context_playlist(playlist_info_df, all_videos_info_df, top_5_videos, worst_5_videos, top_5_comments_analysis, worst_5_comments_analysis):
+    if 'engagementScore' in all_videos_info_df.columns:
+        all_videos_info_df.drop('engagementScore', axis=1, inplace=True)
+    playlist_info_csv = playlist_info_df.to_csv(index=False)
+    all_videos_info_csv = all_videos_info_df.to_csv(index=False)
+    
+    
+    title = playlist_info_df['title'].iloc[0]
+    description = playlist_info_df['description'].iloc[0]
+    publishedAt = playlist_info_df['publishedAt'].iloc[0]
+    uniqueTags = playlist_info_df['uniqueTags'].iloc[0]
+    thumbnail = playlist_info_df['thumbnail'].iloc[0]
+
+    # Convert Pandas int64 values to native Python types for JSON serialization
+    videoCount = int(playlist_info_df['videoCount'].iloc[0])
+    totalViews = int(playlist_info_df['totalViews'].iloc[0])
+    totalLikes = int(playlist_info_df['totalLikes'].iloc[0])
+    totalComments = int(playlist_info_df['totalComments'].iloc[0])
+    average_duration = float(playlist_info_df['average_duration'].iloc[0])
+
+    # Convert the lists to native Python lists
+    videos_publishedAt = all_videos_info_df['publishedAt'].tolist()
+    videos_duration = all_videos_info_df['duration'].tolist()
+    videos_views = all_videos_info_df['viewsCount'].tolist()
+    videos_likes = all_videos_info_df['likesCount'].tolist()
+    videos_commentCount = all_videos_info_df['commentCount'].tolist()
+        
+    top_5_videos = top_5_videos.to_dict(orient='records')
+    worst_5_videos = worst_5_videos.to_dict(orient='records')
+    if top_5_comments_analysis != []:
+        top_5_comments_analysis_dist = top_5_comments_analysis[0].to_dict()
+        top_5_comments = top_5_comments_analysis[1]
+        top_5_comments_analysis_dist = top_5_comments_analysis_dist
+        top_5_comments = top_5_comments
+    
+            
+    if worst_5_comments_analysis != []:
+        worst_5_comments_analysis_dist = worst_5_comments_analysis[0].to_dict()
+        worst_5_comments = worst_5_comments_analysis[1]
+    
+    context = {
+            'top_5_videos':top_5_videos,
+            'worst_5_videos': worst_5_videos,
+            'uniqueTags': uniqueTags,
+            'videos_publishedAt': videos_publishedAt,
+            'videos_duration': videos_duration,
+            'videos_likes': videos_likes,
+            'videos_views':videos_views,
+            'videos_commentCount': videos_commentCount,
+                
+                'title': title,
+                'description': description,
+                'thumbnail': thumbnail,
+                'videoCount': videoCount,
+                'totalViews': totalViews,
+                'totalLikes': totalLikes,
+                'totalComments': totalComments,
+                'average_duration': average_duration,
+                'uniqueTags': uniqueTags,
+                'videos_publishedAt': videos_publishedAt,
+                'videos_duration': videos_duration,
+                'videos_likes': videos_likes,
+                'videos_views': videos_views,
+                'videos_commentCount': videos_commentCount,
+        }
+     
+    if top_5_comments_analysis_dist:
+        context['top_5_comments_analysis_dist'] = top_5_comments_analysis_dist
+        context['top_5_comments'] = top_5_comments
+
+    if worst_5_comments_analysis_dist: 
+        context['worst_5_comments_analysis_dist'] = worst_5_comments_analysis_dist
+        context['worst_5_comments'] = worst_5_comments
+
+    return context
+        
+                
+
+
+   
+@shared_task
+def perform_playlist_analysis(history_id, scheduled_analysis_id):
+    logger.info(f"History ID: {history_id}")
+    if scheduled_analysis.is_active:
+
+        try:
+            history = PlaylistAnalysisHistory.objects.get(id=history_id)
+            scheduled_analysis = ScheduledAnalysis.objects.get(id=scheduled_analysis_id)
+            user = history.user
+            playlist_url = history.playlist_url
+            logger.info(playlist_url)
+            youtube = get_youtube_client()
+            playlist_id = extractIdFromUrl(playlist_url)
+            playlist_info_df, all_videos_info_df, top_5_videos, worst_5_videos, top_5_comments_analysis, worst_5_comments_analysis = analyze_playlist(youtube, playlist_id) 
+            logger.info('done analyzing')
+            # Prepare context
+            context = prepare_analysis_context_playlist(playlist_info_df, all_videos_info_df, top_5_videos, worst_5_videos, top_5_comments_analysis, worst_5_comments_analysis)
+            logger.info(context)
+            # Store results in a new history record
+            new_history = PlaylistAnalysisHistory.objects.create(
+                user=history.user,
+                playlist_url=history.playlist_url,
+                analysis_data=context
+            )
+            
+            new_history.save()
+            
+            logger.info('history_saved')
+            logger.info(user.email)
+
+            # Send email notification
+            # send_mail(
+            #     'Channel Analysis Complete',
+            #     'Your scheduled analysis is complete. Please log in to view the results.',
+            #     settings.EMAIL_HOST_USER,
+            #     [user.email],
+            #     fail_silently=False,
+            # )
+            
+            send_mail(
+                'Playlist Analysis Complete',
+                'Your scheduled analysis is complete. Please log in to view the results.',
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
+
+            # Schedule next run if needed
+            logger.info(f"active: {scheduled_analysis.is_active}")
+            logger.info(f"number of times: : {scheduled_analysis.number_of_times}")
+            logger.info(f"frequency: : {scheduled_analysis.frequency}")
+
+            if scheduled_analysis.number_of_times == -1:
+                # Run indefinitely every 60 seconds
+                perform_playlist_analysis.apply_async((history_id, scheduled_analysis.id), countdown=60)
+            elif scheduled_analysis.number_of_times > 0:
+                scheduled_analysis.number_of_times -= 1
+                if scheduled_analysis.number_of_times == 0:
+                    scheduled_analysis.is_active = False
+                scheduled_analysis.save()
+                eta = calculate_next_run(scheduled_analysis.frequency)
+                logger.info(f"eta: : {eta}")
+                perform_playlist_analysis.apply_async((history_id, scheduled_analysis.id), eta=eta)
+
+        except PlaylistAnalysisHistory.DoesNotExist:
             logger.error(f"History record with ID {history_id} does not exist.")
         except ScheduledAnalysis.DoesNotExist:
             logger.error(f"ScheduledAnalysis record with ID {scheduled_analysis_id} does not exist.")

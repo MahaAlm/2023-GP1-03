@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command: "uvicorn project_qusasa.asgi:application --host 0.0.0.0 --port 8000 --workers 3"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SECRET_KEY = ${SECRET_KEY}
+      - USER_IG = ${USER_IG}
+      - PASS_IG = ${PASS_IG}
+      - EMAIL_ADD = ${EMAIL_ADD}
+      - PASS_EMAIL = ${PASS_EMAIL}
+      - DEVELOPER_KEY = ${DEVELOPER_KEY}
+      - EMAIL_HOST_USER = ${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD = ${EMAIL_HOST_PASSWORD}
+      - DEBUG = False
+
+  celery:
+    build: .
+    command: celery -A project_qusasa worker --loglevel=debug
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
