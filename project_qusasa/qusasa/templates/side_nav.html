@@ -12,7 +12,7 @@
     <div class="side-nav-container">
       <img src="{% static 'qusasa/images/Qusasa end.png' %}" alt="" />
       <a class="el" href="{% url 'base'%}" {% if current_url == 'base' %}id="el-current"{% endif %} ><i class="fa-solid fa-clock"></i> My History</a>
-      <a class="el" href="{%url 'wFeature'%}" {% if current_url == 'wFeature' or current_url == 'InstagramFeat' or current_url == 'YouTubeFeat'%} id="el-current" {% endif %} ><i class="fa-solid fa-scissors"></i> Qusasa's Features</a>
+      <a class="el" href="{%url 'wFeature'%}" {% if current_url == 'wFeature' or current_url == 'InstagramFeat' or current_url == 'YouTubeFeat' or current_url == 'competitive_analysis_details' or current_url == 'video_analysis_details' or current_url == 'playlist_analysis_details' or current_url == 'channel_analysis_details' or current_url == 'topic_analysis_details' or current_url == 'video_retriving_details'%} id="el-current" {% endif %} ><i class="fa-solid fa-scissors"></i> Qusasa's Features</a>
       <a class="el" href="{% url 'user_inquiries'%}" {% if current_url == 'user_inquiries' or current_url == 'add_inquiry' or current_url == 'user_display_inquiry' or current_url == 'update_inquiry'%}id="el-current"{% endif %} ><i class="fa-solid fa-circle-question"></i> Inquiries</a>
     </div>
   </div>

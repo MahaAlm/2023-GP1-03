@@ -17,7 +17,7 @@ from django.core.exceptions import ValidationError
 import re
 import os
 from django.conf import settings
-from decouple import config
+#from decouple import config
 from ..models import TopicAnalysisHistory
 import pandas as pd
 from .auth_views import *
@@ -267,7 +267,25 @@ def competitive_analysis_output_view(request):
     zipped_channels = zip(channel_icons, channel_names, top_videos)
 
 
+    channeldf = pd.read_csv(StringIO(request.session['channel_data_csv']))
+    top_videosdf = pd.read_csv(StringIO(request.session['top_videos_csv']))
+
+    datasets = {
+        'Competetors': {
+            'preview': channeldf.head(3).to_dict(orient='records'),
+            'dimensions': f"{channeldf.shape[0]} row x {channeldf.shape[1]} column"
+        },
+        'All Videos': {
+            'preview': top_videosdf.head(3).to_dict(orient='records'),
+            'dimensions': f"{top_videosdf.shape[0]} row x {top_videosdf.shape[1]} column"
+        }
+    }
+
+
+
+
     context = {
+        'datasets': datasets,
         'zipped_channels': zipped_channels,
         'channel_names': channel_names,
         'channel_icons': channel_icons,
@@ -420,9 +438,25 @@ def video_analysis_output_view(request):
     doc_output_dir = os.path.join(settings.MEDIA_ROOT, 'documents')
     
     docx_file_path = create_word_document(transcript, summary, "video_analysis", doc_output_dir)
-    
-    context= {'json_data': json_data, 
-              'transcript': request.session['transcript'],
+    channeldf = pd.read_csv(StringIO(request.session['video_info_csv']))
+    top_videosdf = pd.read_csv(StringIO(request.session['comments_csv']))
+
+    datasets = {
+        'Videos': {
+            'preview': channeldf.head(3).to_dict(orient='records'),
+            'dimensions': f"{channeldf.shape[0]} row x {channeldf.shape[1]} column"
+        },
+        'Comments': {
+            'preview': top_videosdf.head(3).to_dict(orient='records'),
+            'dimensions': f"{top_videosdf.shape[0]} row x {top_videosdf.shape[1]} column"
+        }
+    }
+
+
+    context= {
+            'datasets': datasets,
+            'json_data': json_data, 
+            'transcript': request.session['transcript'],
             'summary': request.session['summary'],
             "video_info_dict": request.session['video_info_dict'],
             'docx_file': docx_file_path,
@@ -613,8 +647,26 @@ def playlist_analysis_output_view(request):
 
         
     json_data = json.dumps(output_data)
-    
-    context = {'json_data': json_data,
+
+
+    playlist_df = pd.read_csv(StringIO(request.session['playlist_info_csv']))
+    all_videos_df = pd.read_csv(StringIO(request.session['all_videos_info_csv']))
+
+    datasets = {
+        'Playlist': {
+            'preview': playlist_df.head(3).to_dict(orient='records'),
+            'dimensions': f"{playlist_df.shape[0]} row x {playlist_df.shape[1]} column"
+        },
+        'All Videos': {
+            'preview': all_videos_df.head(3).to_dict(orient='records'),
+            'dimensions': f"{all_videos_df.shape[0]} row x {all_videos_df.shape[1]} column"
+        }
+    }
+
+
+
+    context = {'datasets': datasets,
+               'json_data': json_data,
               'top_5_videos': top_5_videos,
               'worst_5_videos': worst_5_videos,
               'title': request.session['title'],
@@ -1129,10 +1181,32 @@ def topic_analysis_output_view(request):
         # Reformat the date to 'YYYY MMM DD' and update the video dictionary
         video['publishedAt'] = date_obj.strftime('%Y %b %d')
 
-        
+    channel_df_csv = request.session.get('channel_df_csv', '')
+    all_videos_info_csv = request.session.get('all_videos_info_csv', '')
+    comments_csv = request.session.get('comments_csv', '')  
     json_data = json.dumps(output_data)
-    
+    channeldf = pd.read_csv(StringIO(request.session['channel_df_csv']))
+    top_videosdf = pd.read_csv(StringIO(request.session['all_videos_info_csv']))
+    comments = pd.read_csv(StringIO(request.session['comments_csv']))
+
+    datasets = {
+        'Channel': {
+            'preview': channeldf.head(3).to_dict(orient='records'),
+            'dimensions': f"{channeldf.shape[0]} row x {channeldf.shape[1]} column"
+        },
+        'All videos': {
+            'preview': top_videosdf.head(3).to_dict(orient='records'),
+            'dimensions': f"{top_videosdf.shape[0]} row x {top_videosdf.shape[1]} column"
+        },
+        'Comments': {
+            'preview': top_videosdf.head(3).to_dict(orient='records'),
+            'dimensions': f"{top_videosdf.shape[0]} row x {top_videosdf.shape[1]} column"
+        }
+    }
+
+
     context= {
+        'datasets': datasets,
         'json_data': json_data,
         'top_5_videos': top_5_videos,
         'channels_dict': request.session['channels_dict'],
@@ -1252,7 +1326,16 @@ class VideoRetrivingWizard(SessionWizardView):
 def video_retriving_output_view(request):
     def_retrive(request)
     
+    all_videos_df = pd.read_csv(StringIO(request.session['related_videos_csv']))
+    datasets = {
+            'Related videos': {
+                'preview': all_videos_df.head(3).to_dict(orient='records'),
+                'dimensions': f"{all_videos_df.shape[0]} row x {all_videos_df.shape[1]} column"
+            }
+    }
+    
     context = {
+        'datasets':datasets,
         'related_videos_csv': request.session['related_videos_csv'],
         'related_videos_dict':request.session['related_videos_dict'],
         'related_videos_full_dict': request.session['related_videos_full_dict'],

@@ -245,8 +245,11 @@
                   <td>{{ post.author }}</td>
                   <td>{{ post.InqContent }}</td>
                   <td>{{ post.status }}</td>
-
                 </tr>
+                {% empty %}
+                        <tr>
+                            <td colspan="6">No posts</td>
+                        </tr>
                 {% endfor %}
               </tbody>
             </table>

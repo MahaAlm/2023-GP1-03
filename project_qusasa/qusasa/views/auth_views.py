@@ -73,6 +73,25 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+def logoutadmin_view(request):
+    logout(request)
+    return redirect('/admin/login/')
+
+from django.shortcuts import render
+
+import logging
+
+def handle_exception(request, exception=None, template_name="qusasa/error.html"):
+    logger = logging.getLogger(__name__)
+    try:
+        message = str(exception) if exception else "Unknown Error"
+        context = {'message': message}
+        response = render(request, "qusasa/error.html", context)
+        return response
+    except Exception as e:
+        logger.error('Error in handling exception: %s', str(e))
+        return HttpResponse('A server error occurred.', status=500)
+
 
 @staff_member_required
 @email_verified_required
@@ -163,11 +182,9 @@ def add_inquiry(request):
         new_inquiry.save()
 
         # Fetch and assign the uploaded image and file
-        uploaded_image = request.FILES.get('picture')
-        print('hi')
-        if uploaded_image:
-            print("Image received:", uploaded_image.name)  # Log the image name
-            new_inquiry.picture = uploaded_image
+        for file in request.FILES.getlist('picture'):
+                InquiryImage.objects.create(inquiry=new_inquiry.id, picture=file)
+
         new_inquiry.save()  # Save again to store the uploads
 
         # Redirect to an appropriate view after saving
@@ -175,7 +192,6 @@ def add_inquiry(request):
 
     return render(request, 'qusasa/add_inquiry.html')  # Redirect to an appropriate view after saving
 
-    return render(request, 'qusasa/add_inquiry.html')
 
 def update_inquiry(request, inquiry_id):
     # Get the Inquiry instance you want to update

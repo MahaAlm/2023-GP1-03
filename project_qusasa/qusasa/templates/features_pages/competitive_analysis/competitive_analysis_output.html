@@ -68,7 +68,89 @@
         margin-left: 5px;
         margin-right: 2px;
     }
+    .table-container {
+        width: 90%;
+        max-width: 90%;
+        overflow-x: scroll; /* Always show horizontal scrollbar */
+        border-radius: 8px;
+        -webkit-overflow-scrolling: touch; /* Improves scrolling on touch devices */
+        scrollbar-width: thin; /* For Firefox */
+        scrollbar-color: #888 #f1f1f1; /* For Firefox: scrollbar thumb and track colors */
+    }
+    
+    /* For Webkit (Chrome, Safari, etc.) */
+    .table-container::-webkit-scrollbar {
+        height: 8px; /* Height of the scrollbar */
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+        background: #888; /* Color of the scrollbar thumb */
+        border-radius: 4px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Color of the scrollbar track */
+        border-radius: 4px;
+    }
+    table {
+        position: relative;
+        border-collapse: collapse;
+        width: 100%; /* Adjusted to fill the container */
+        font-size: 0.7rem;
+        transition: 0.3s ease; /* Smooth transition for background color */
+    }
+    
+    
+    /* Style the table headers and cells */
+    th, td {
+    text-align: left;
+    padding: 8px; /* Adjust padding as needed */
+    color: white; /* White text */
+    border-bottom: 1px solid rgba(48, 38, 114, 0.617); /* White borders between rows */
+    transition: background-color 0.3s; /* Transition for background color change */
+    
+    }
+    
+    /* Style for the table headers */
+    th {
+    background-color: #4f508a; /* Darker shade of purple for headers */
+    }
+    
+    /* Style for the table cells */
+    td {
+    background-color: #777ca9; /* Muted purple background for cells */
+    }
+    
+    /* When hovering over the table, darken the shade of headers and cells */
+    table:hover th {
+    background-color: #454597; /* Darker shade for headers on table hover */
+    }
+    
+    table:hover td {
+    background-color: #6e75b0; /* Darker shade for cells on table hover */
+    }
+    
+    table:hover {
+    transform: translateY(-10px);
+    transition: transform 0.3s ease;
+    }
+    .dataset-preview h3 {
+        margin-top: 2rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        width: 90%;
+        text-align: left;
+    
+    
+    }
 
+    
+    .dataset-preview p {
+        text-align: left;
+        font-size: 1rem;
+        margin: 0;
+        width: 90%;
+    }
 
     </style>
   </head>
@@ -151,7 +233,34 @@
         </div>
 
         </div>
-        
+        <div class="mini-container dataset-preview">
+            <h2 data-aos="fade-up">Datasets Preview</h2>
+            {% for dataset_name, dataset_info in datasets.items %}
+                <h3 data-aos="fade-up">{{ dataset_name }} Preview (First 3 Rows)</h3>
+                <div class="table-container">
+                <table data-aos="fade-up">
+                    <thead>
+                        <tr>
+                            {% for header in dataset_info.preview.0.keys %}
+                                <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in dataset_info.preview %}
+                            <tr>
+                                {% for cell in row.values %}
+                                    <td>{{ cell|truncatechars:20 }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+                <p data-aos="fade-up">{{ dataset_info.dimensions }}</p>
+            {% endfor %}
+            </div>
+
         <div class="mini-container stats-graphs-container" id="section2">
             <div class="stats-graphs" data-aos="fade-up">
                 <h1>Get An Overview</h1>
@@ -465,6 +574,11 @@
                     return channels[dataPointIndex]
                 }
             }
+        },                
+         y: {
+            formatter: function (value) {
+                return Math.round(value); // Tooltip also shows rounded values
+            }
         },
         theme: {
             mode: 'dark',
@@ -489,6 +603,15 @@
         },
         grid: {
             show: false
+        },
+        yaxis: {
+            min: 0,
+            tickAmount: 4,
+            labels: {
+                formatter: function (value) {
+                    return Math.round(value); // Ensuring y-axis labels are whole numbers
+                }
+            }
         },
         legend: {
             show: false
@@ -652,6 +775,12 @@ var colorPalette = ['#00E396', '#008FFB', '#FEB019', '#FF4560', '#775DD0', /* mo
 
 var categoryColors = {};
 var colorIndex = 0;
+durations.map(channelDurations => {
+    if(channelDurations.length === 0) {
+        console.log('Empty data found');
+    }
+});
+
 
     mostUsedCategories.forEach((channelData, index) => {
         channelData.forEach(([category, count]) => {
@@ -703,6 +832,11 @@ var seriesData = {};
                     // Display the full channel name in the tooltip
                     return channels[dataPointIndex]
                 }
+            }
+        },
+        y: {
+            formatter: function (value) {
+                return Math.round(value); // Tooltip also shows rounded values
             }
         },
         theme: {
@@ -767,6 +901,7 @@ var optionsBoxPlot = {
             }
         }
     },
+
     theme: {
         mode: 'dark',
         palette: 'palette1'
@@ -826,6 +961,7 @@ var originalOptionsdur = boxPlotChart.w.config;
 </script>
 
 <script>
+    
     function animateNumber(element, start, end, duration) {
         let startTime = null;
     

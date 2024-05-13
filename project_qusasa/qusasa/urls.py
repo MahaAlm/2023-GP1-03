@@ -7,6 +7,9 @@ from django.conf import settings
 from django.urls import include, path
 from .views import InqListView,update_inquiry
 
+handler500 = 'qusasa.views.handle_exception'
+
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin_site.urls),
@@ -19,6 +22,7 @@ urlpatterns = [
     path('InstagramFeat/', views.InstagramFeat, name='InstagramFeat'),
     path('YouTubeFeat/', views.YouTubeFeat, name='YouTubeFeat'),
     path('logout/', views.logout_view, name='logout'),
+    path('admin/logout', views.logoutadmin_view, name='logoutad'),
     path('signup/', views.signup, name='signup'),
     path('confirm_email/', views.confirm_email, name='confirm_email'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),

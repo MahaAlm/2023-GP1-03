@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+# In your project's urls.py
+handler500 = 'qusasa.views.handle_exception'
 
 urlpatterns = [
     path('', include('qusasa.urls')),

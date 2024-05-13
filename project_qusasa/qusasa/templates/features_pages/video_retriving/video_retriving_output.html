@@ -161,6 +161,135 @@ button:hover {
     height: 100px;
     margin-top: 10vh;
 }
+nav {
+  background-color: #5f4e9c; /* Light purple background color */
+  padding: 10px;
+  border-radius: 10px; /* Rounded edges */
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex; /* Enables flexbox */
+  justify-content: space-between; /* Distributes space evenly */
+  align-items: center; /* Aligns items vertically */
+
+}
+
+nav ul li {
+  margin: 0; /* Removes margin between li elements */
+
+  display: inline;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: white; /* Default color */
+}
+
+nav ul li a:hover {
+  color: purple; /* Color change on hover */
+}
+
+
+.table-container {
+  width: 90%;
+  max-width: 90%;
+  overflow-x: scroll; /* Always show horizontal scrollbar */
+  border-radius: 8px;
+  -webkit-overflow-scrolling: touch; /* Improves scrolling on touch devices */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 #f1f1f1; /* For Firefox: scrollbar thumb and track colors */
+}
+
+/* For Webkit (Chrome, Safari, etc.) */
+.table-container::-webkit-scrollbar {
+  height: 8px; /* Height of the scrollbar */
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar thumb */
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the scrollbar track */
+  border-radius: 4px;
+}
+table {
+  position: relative;
+  border-collapse: collapse;
+  width: 100%; /* Adjusted to fill the container */
+  font-size: 0.7rem;
+  transition: 0.3s ease; /* Smooth transition for background color */
+}
+
+
+/* Style the table headers and cells */
+th, td {
+text-align: left;
+padding: 8px; /* Adjust padding as needed */
+color: white; /* White text */
+border-bottom: 1px solid rgba(48, 38, 114, 0.617); /* White borders between rows */
+transition: background-color 0.3s; /* Transition for background color change */
+
+}
+
+/* Style for the table headers */
+th {
+background-color: #4f508a; /* Darker shade of purple for headers */
+}
+
+/* Style for the table cells */
+td {
+background-color: #777ca9; /* Muted purple background for cells */
+}
+
+/* When hovering over the table, darken the shade of headers and cells */
+table:hover th {
+background-color: #454597; /* Darker shade for headers on table hover */
+}
+
+table:hover td {
+background-color: #6e75b0; /* Darker shade for cells on table hover */
+}
+
+table:hover {
+transform: translateY(-10px);
+transition: transform 0.3s ease;
+}
+.dataset-preview h3 {
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  width: 90%;
+  text-align: left;
+
+
+}
+.mini-container {
+  background: rgb(8, 14, 77);
+  padding: 5rem 0;
+  border-radius: 50px;
+  margin: 3rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  border: 1px solid #7587ff;
+  box-shadow: 0 0 30px 10px #6b4e8f76;
+
+}
+
+.dataset-preview p {
+  text-align: left;
+  font-size: 1rem;
+  margin: 0;
+  width: 90%;
+}
   </style>
  
   <body>
@@ -174,10 +303,19 @@ button:hover {
             <div class="output-header " data-aos="fade-up">
                 <h1>Your selection of videos is ready!</h1>
                 <p>Explore the collection below to discover content related to your search. Use these insights to enhance your understanding, create content, or simply enjoy the diversity of videos available on your topic of interest.</p>
-            </div>
+                <nav>
+                  <ul>
+                      <li><a href="#section1">Download results </a></li>
+                      <li><a href="#section2">Top related videos </a></li>
+                      <li><a href="#section5">Modify Dataset </a></li> 
+                      <li><a href="#section6">Ask AI </a></li>
+                      <li><a href="#section7">Generate Graphs </a></li>
+                  </ul>
+              </nav>
+              </div>
         </div>
         
-        <div class="mini-container">
+        <div class="mini-container" id='section1'>
             <h2 data-aos="fade-up">Download your results:</h2>
         <div class="downlaodables" data-aos="fade-up">
             <div class="download-dataset download-el">
@@ -212,12 +350,39 @@ button:hover {
         </div>
 
         </div>
+        <div class="mini-container dataset-preview">
+          <h2 data-aos="fade-up">Datasets Preview</h2>
+          {% for dataset_name, dataset_info in datasets.items %}
+              <h3 data-aos="fade-up">{{ dataset_name }} Preview (First 3 Rows)</h3>
+              <div class="table-container">
+              <table data-aos="fade-up">
+                  <thead>
+                      <tr>
+                          {% for header in dataset_info.preview.0.keys %}
+                              <th>{{ header }}</th>
+                          {% endfor %}
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for row in dataset_info.preview %}
+                          <tr>
+                              {% for cell in row.values %}
+                                  <td>{{ cell|truncatechars:20 }}</td>
+                              {% endfor %}
+                          </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+              <p data-aos="fade-up">{{ dataset_info.dimensions }}</p>
+          {% endfor %}
+          </div>
         
         <h1 data-aos="fade-up">Explore the top related videos</h1>
         <p data-aos="fade-up">Delve into the most popular content in your selected topic </p>
        
       
-        <div class="mini-container">
+        <div class="mini-container" id='section2'>
 
             <div class="flex-container">
                 <div class="card-container">
