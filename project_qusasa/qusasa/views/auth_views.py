@@ -132,7 +132,7 @@ def inquiries_view(request):
 
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import InquiryForm
-from ..models import Inquiry
+from ..models import Inquiry, InquiryImage
 from django.utils import timezone,dateformat
 
 def display_inquiry(request, history_id):
@@ -183,7 +183,7 @@ def add_inquiry(request):
 
         # Fetch and assign the uploaded image and file
         for file in request.FILES.getlist('picture'):
-                InquiryImage.objects.create(inquiry=new_inquiry.id, picture=file)
+                InquiryImage.objects.create(inquiry=new_inquiry, picture=file)
 
         new_inquiry.save()  # Save again to store the uploads
 
@@ -195,26 +195,21 @@ def add_inquiry(request):
 
 def update_inquiry(request, inquiry_id):
     # Get the Inquiry instance you want to update
-    inquiry = get_object_or_404(Inquiry, pk=inquiry_id)
-    updates = inquiry.InqContent.split('\n\n\t\n\n')
-
-
+    inquiryq = get_object_or_404(Inquiry, pk=inquiry_id)
+    updates = inquiryq.InqContent.split('\n\n\t\n\n')
     if request.method == "POST":
         new_content = request.POST.get('inq_content', '')
+
         if new_content!='':
-            inquiry.InqContent += "\n\n\t\n\n, "+new_content+"\n"+str(dateformat.format(timezone.localtime(timezone.now()),'Y-m-d ',))
-            inquiry.status='WAITING'
+            inquiryq.InqContent += "\n\n\t\n\n, "+new_content+"\n"+str(dateformat.format(timezone.localtime(timezone.now()),'Y-m-d ',))
+            inquiryq.status='WAITING'
 
         
-        new_picture = request.FILES.get('new_picture')
-        if new_picture:
-            # Check if the new picture is not None
-            print('New picture uploaded:', new_picture.name)
-            inquiry.picture = new_picture
-        else:
-            print('No new picture uploaded.')
+ 
+        for file in request.FILES.getlist('new_picture'):
+            InquiryImage.objects.create(inquiry=inquiryq, picture=file)
         # Save the updated inquiry
-        inquiry.save()
+        inquiryq.save()
         
         # Redirect to a new URL after saving:
         
@@ -222,7 +217,7 @@ def update_inquiry(request, inquiry_id):
 
     else:
         # Assuming you are passing the inquiry instance to the template to pre-fill the form fields with existing data
-        return render(request, 'qusasa/update_inquiry.html', {'updates': updates,'inquiry': inquiry})
+        return render(request, 'qusasa/update_inquiry.html', {'updates': updates,'inquiry': inquiryq})
     
 
 def user_display_inquiry(request, history_id):

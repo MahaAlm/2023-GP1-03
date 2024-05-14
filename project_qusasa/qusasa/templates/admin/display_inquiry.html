@@ -124,6 +124,12 @@
     transition: transform 0.3s ease;
     margin-right: 1%;
 }
+#image-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
 
 .inquery-image-container:hover {
     transform: scale(1.05);
@@ -208,15 +214,21 @@
                             <div class="inquery-el">
     
                                 <p><strong>Attached Image:</strong></p>
-                                {% if history.picture %}
+                                <div id="image-container" class="image-container">
+                                {% for image in history.images.all %}
                                 <div class="inquery-image-container">
-                                  <a href="{{ history.picture.url }}" target="_blank">
-                                    <img src="{{ history.picture.url }}" alt="Inquiry Picture" style="width: 100px; height: 100px; border-radius: 10px;" />
-                                  </a>
-                                </div>
-                                {% else %}
+
+                                <a href="{{ image.picture.url }}" target="_blank" style="    width: fit-content; ">
+                                  <img src="{{ image.picture.url }}" alt="Inquiry Picture" style="width: 100px; height: 100px; border-radius: 10px;" />
+
+                                </a>
+                              </div>
+
+                                {% empty %}
                                 <div class="inquery-box">No picture attached</div>
-                                {% endif %}
+                                {% endfor %}
+                                </div>
+
                             </div>
                         </div>
                         <br>

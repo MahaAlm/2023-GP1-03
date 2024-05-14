@@ -266,7 +266,75 @@
     padding: 8px;
 }
 
+.inquiry-image-container {
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+    margin-left: 1.5%;
+    text-align: center; /* Center-align the image and input */
+    padding: 1%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
+.inquiry-image-container img {
+
+    margin-up:2%;
+    display: block;
+    width: 100px;
+    max-width: 100px;
+    height: 100px;
+    text-align: center; /* Center-align the image and input */
+    transition: transform 0.3s ease;
+    margin-right: 1%;
+}
+
+.inquiry-image-container:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+#image-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.inquiry-image-container {
+    border: 1px solid #ccc;
+    padding: 5px;
+    position: relative;
+}
+
+.inquiry-image-container button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.inquiry-image-container {
+    position: relative;
+    display: inline-block; /* Allows the image wrapper to fit the size of the image */
+    margin: 10px;
+}
+
+.inquiry-image-container img.responsive-image {
+    display: block;
+    width: 100px;  /* Adjust width as needed */
+    height: auto;
+}
+
+.inquiry-image-container {
+    position: relative;
+    display: inline-block;  /* This makes sure each image is treated as an inline element with block properties */
+    margin: 10px;           /* Adds some space around each image */
+    border: 1px solid #ccc; /* Optional: Adds a border around each image for better visibility */
+}
 label {
    cursor: pointer;
    /* Style as you please, it will become the visible UI component. */
@@ -363,11 +431,12 @@ label:hover {
                                   <br>
                                   <p style="margin: 3% 2%;"><strong>Replace the Image:</strong></p>
 
-                                  <label style="margin: 5%" for="upload-photo">Upload Image</label>
-                                  <input type="file" name="new_picture" id="upload-photo" accept="image/*" onchange="previewImage();"/>
+                                  <label style="margin: 5%" for="upload-photo" id='upload-label'>Upload Image</label>
+                                  <input type="file" name="new_picture" id="upload-photo" multiple accept="image/*" onchange="previewMultipleImages();"/>
                                   <br><br>
-                                  <img id="display-image" alt="Image will be displayed here after uploading." style="margin: 3.5%; display: none;  width: 100px; height: 100px; border-radius: 10px;"/>
-    
+                                  <div id="image-container" class="image-container">
+                                    <!-- Images are added dynamically here -->
+                                </div>    
                                 
                                 
                                   
@@ -391,16 +460,64 @@ label:hover {
   <!-- JavaScript for Interactive Elements -->
   <script src="{% static 'qusasa/js/script.js' %}"></script>
   <script>
-              function previewImage() {
-        var file = document.getElementById('upload-photo').files[0];
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var displayImage = document.getElementById('display-image');
-            displayImage.src = e.target.result;
-            displayImage.style.display = 'block';  // Make the image visible by changing the display property
-        }
-        reader.readAsDataURL(file);
+    function addImageToDOM(src, imageId) {
+        const imageContainer = document.getElementById('image-container');
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'inquiry-image-container';
+    
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Uploaded Image';
+    
+    
+        imageWrapper.appendChild(img);
+        imageContainer.appendChild(imageWrapper);
     }
+    
+            
+    
+    function previewMultipleImages() {
+        var label = document.getElementById('upload-label');
+        var imageContainer = document.getElementById('image-container'); // This should match your container's ID
+        var files = document.getElementById('upload-photo').files; // Make sure this matches your input's ID
+        if (files.length > 5) {
+            alert('You can only upload up to 5 images.');
+            document.getElementById('upload-photo').value=''
+            return; // Exit the function if more than 5 files are uploaded
+        } else if (files.length > 0) {
+            label.textContent = 'Change Image';  // Change the label text
+        }
+
+        if (files.length > 0) {
+            label.textContent = 'Change Image';  // Change the label text
+        }
+        imageContainer.innerHTML = '';  // Clear existing content
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader();
+    
+            reader.onload = (function(theFile) {
+                return function(e) {
+                    // Create the elements for each file
+                    var imageWrapper = document.createElement('div');
+                    imageWrapper.className = 'inquiry-image-container';
+    
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = theFile.name;  // Use file name as alt text
+    
+
+    
+                    // Append the img and button to the div, then the div to the container
+                    imageWrapper.appendChild(img);
+                    imageContainer.appendChild(imageWrapper);
+                };
+            })(file);
+    
+            reader.readAsDataURL(file);
+        }
+    }
+
       document.querySelector('.hamburger').addEventListener('click', function(e) {
           let navs = document.querySelector('.side-nav');
 

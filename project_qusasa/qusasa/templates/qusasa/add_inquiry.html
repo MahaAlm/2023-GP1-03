@@ -247,8 +247,80 @@ label {
 label:hover {
     background-color: #0056b3;
 }
+.inquiry-image-container {
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+    margin-left: 1.5%;
+    text-align: center; /* Center-align the image and input */
+    padding: 1%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    </style>
+.inquiry-image-container img {
+
+    margin-up:2%;
+    display: block;
+    width: 100px;
+    max-width: 100px;
+    height: 100px;
+    text-align: center; /* Center-align the image and input */
+    transition: transform 0.3s ease;
+    margin-right: 1%;
+}
+
+.inquiry-image-container:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+#image-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.inquiry-image-container {
+    border: 1px solid #ccc;
+    padding: 5px;
+    position: relative;
+}
+
+.inquiry-image-container button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.inquiry-image-container {
+    position: relative;
+    display: inline-block; /* Allows the image wrapper to fit the size of the image */
+    margin: 10px;
+}
+
+.inquiry-image-container img.responsive-image {
+    display: block;
+    width: 100px;  /* Adjust width as needed */
+    height: auto;
+}
+
+.inquiry-image-container {
+    position: relative;
+    display: inline-block;  /* This makes sure each image is treated as an inline element with block properties */
+    margin: 10px;           /* Adds some space around each image */
+    border: 1px solid #ccc; /* Optional: Adds a border around each image for better visibility */
+}
+
+
+
+        </style>
+        
         <script>
           function updateCounter() {
               const maxChars = 60;
@@ -269,18 +341,65 @@ label:hover {
               }
           }
           document.addEventListener('DOMContentLoaded', updateCounter);
-          
-          function previewImage() {
-        var file = document.getElementById('upload-photo').files[0];
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var displayImage = document.getElementById('display-image');
-            displayImage.src = e.target.result;
-            displayImage.style.display = 'block';  // Make the image visible by changing the display property
+        function addImageToDOM(src, imageId) {
+            const imageContainer = document.getElementById('image-container');
+            const imageWrapper = document.createElement('div');
+            imageWrapper.className = 'inquiry-image-container';
+        
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Uploaded Image';
+        
+        
+            imageWrapper.appendChild(img);
+            imageContainer.appendChild(imageWrapper);
         }
-        reader.readAsDataURL(file);
-    }
+        
+                
+        
+        function previewMultipleImages() {
+            var files = document.getElementById('upload-photo').files; // Make sure this matches your input's ID
+            var label = document.getElementById('upload-label');
+
+            if (files.length > 5) {
+                alert('You can only upload up to 5 images.');
+                document.getElementById('upload-photo').value=''
+                return; // Exit the function if more than 5 files are uploaded
+            } else if (files.length > 0) {
+                label.textContent = 'Change Image';  // Change the label text
+            }
+            var imageContainer = document.getElementById('image-container'); // This should match your container's ID
     
+            if (files.length > 0) {
+                label.textContent = 'Change Image';  // Change the label text
+            }
+            imageContainer.innerHTML = '';  // Clear existing content
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+        
+                reader.onload = (function(theFile) {
+                    return function(e) {
+                        // Create the elements for each file
+                        var imageWrapper = document.createElement('div');
+                        imageWrapper.className = 'inquiry-image-container';
+        
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = theFile.name;  // Use file name as alt text
+        
+
+        
+                        // Append the img and button to the div, then the div to the container
+                        imageWrapper.appendChild(img);
+                        imageContainer.appendChild(imageWrapper);
+                    };
+                })(file);
+        
+                reader.readAsDataURL(file);
+            }
+        }
+                    
           </script>    
 </head>
 <body> 
@@ -322,7 +441,7 @@ label:hover {
                         <div class="feature-text">
                             <h1>Add Inquiry</h1>
                             <div class="inquery-el" style="margin-top: 3rem;">
-                                <p><strong>title:</strong></p>
+                                <p><strong>Title:</strong></p>
                                 <!-- Ensure the textarea has a name attribute -->
                                 <input class="inquery-box" style="width: 100%; height: 1.2rem;" id='title' name="title" maxlength="60" oninput="updateCounter()"/>
                                 <span id="charCount">60</span> characters remaining
@@ -333,12 +452,18 @@ label:hover {
                                 <textarea class="inquery-box" style="width: 100%" name="inq_content"></textarea>       
                             </div>
                             <div class="inquery-el" style="margin-top: 3rem;">
-                              <p><b>Add an Image</b></p>
+                              <p><b>Add an Image:</b></p>
                               <br>
-                              <label for="upload-photo">Upload Image</label>
-                              <input type="file" name="picture" id="upload-photo" accept="image/*" style="display: none;" onchange="previewImage();" />
-                              <br><br>
-                              <img id="display-image" alt="Image will be displayed here after uploading." style="margin: 3.5%; display: none;  width: 100px; height: 100px; border-radius: 10px;"/>
+                              <label for="upload-photo" id='upload-label'>Upload Image</label>
+                              <input type="file" name="picture" id="upload-photo" multiple accept="image/*" style="display: none;" onchange="previewMultipleImages();" />
+                              <br>
+                              <div id="image-container" class="image-container">
+                                <!-- Images are added dynamically here -->
+                            </div>
+                            
+                            
+
+ 
                               </div>
 
                             <button type="submit">Submit Inquiry</button>
@@ -395,7 +520,7 @@ document.addEventListener('click', function(e) {
 function hideSideNav(navs) {
     navs.style.opacity = '0';
     navs.style.transform = 'scale(0.5)';
-    setTimeout(() => { navs.style.visibility = 'hidden'; }, 1000);
+    setTimeout(() => { navs.style.visibility = 'hidden'; }, 1000 );
 }
 
 
