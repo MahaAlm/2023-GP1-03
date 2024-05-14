@@ -359,7 +359,12 @@ label:hover {
    margin: 2%;
 
 }
-
+.inquiry-image-container {
+    position: relative;
+    display: inline-block;  /* This makes sure each image is treated as an inline element with block properties */
+    margin: 10px;           /* Adds some space around each image */
+    border: 1px solid #ccc; /* Optional: Adds a border around each image for better visibility */
+}
     </style>
 
 </head>
@@ -418,16 +423,22 @@ label:hover {
                               <div class="inquery-el">
                                   <p><strong>Attached Image:</strong></p>
                                   <br>
-                                  {% if inquiry.picture %}
-                                  
+                                  <div id="image-container" class="image-container">
+
+                                  {% for image in inquiry.images.all %}
                                   <div class="inquery-image-container">
-                                    <a href="{{ inquiry.picture.url }}" target="_blank">
-                                      <img src="{{ inquiry.picture.url }}" alt="Inquiry Picture" style="width: 100px; height: 100px; border-radius: 10px;" />
+  
+                                  <a href="{{ image.picture.url }}" target="_blank" style="    width: fit-content; ">
+                                    <img src="{{ image.picture.url }}" alt="Inquiry Picture" style="width: 100px; height: 100px; border-radius: 10px;" />
+  
                                   </a>
-                                  </div>
-                                  {% else %}
+                                </div>
+  
+                                  {% empty %}
                                   <div class="inquery-box">No picture attached</div>
-                                  {% endif %}
+                                  {% endfor %}
+                                </div>
+
                                   <br>
                                   <p style="margin: 3% 2%;"><strong>Replace the Image:</strong></p>
 
@@ -437,6 +448,8 @@ label:hover {
                                   <div id="image-container" class="image-container">
                                     <!-- Images are added dynamically here -->
                                 </div>    
+                                <div id="image-warning" style="color: red; display: none;">You can only upload up to 5 images.</div>
+
                                 
                                 
                                   
@@ -480,11 +493,17 @@ label:hover {
         var label = document.getElementById('upload-label');
         var imageContainer = document.getElementById('image-container'); // This should match your container's ID
         var files = document.getElementById('upload-photo').files; // Make sure this matches your input's ID
+        var imageWarning = document.getElementById('image-warning');
+
         if (files.length > 5) {
-            alert('You can only upload up to 5 images.');
             document.getElementById('upload-photo').value=''
+            imageContainer.innerHTML = '';
+
+            imageWarning.style.display = 'block';
+            imageWarning.textContent = 'You can only upload up to 5 images.';
             return; // Exit the function if more than 5 files are uploaded
         } else if (files.length > 0) {
+            imageWarning.style.display = 'none';
             label.textContent = 'Change Image';  // Change the label text
         }
 

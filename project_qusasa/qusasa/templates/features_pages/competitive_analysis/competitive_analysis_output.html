@@ -536,31 +536,31 @@
 <script id="json-data" type="application/json">{{ json_data|safe }}</script>
 
 <script>
-
     var jsonData = JSON.parse(document.getElementById('json-data').textContent);
-    var channels = jsonData.channel_names
-    var views = jsonData.average_views
-    var likes = jsonData.average_likes
-    var subscribers = jsonData.subs
+    var channels = jsonData.channel_names;
+    var views = jsonData.average_views;
+    var likes = jsonData.average_likes;
+    var subscribers = jsonData.subs;
+    
     const trimmedChannels = channels.map(label => 
-    label.length > 15 ? label.substring(0, 5) + '...' : label);
-
-    console.log(jsonData.topTags)
+        label.length > 15 ? label.substring(0, 5) + '...' : label
+    );
+    
+    console.log(jsonData.topTags);
+    
     var options = {
         chart: {
             type: 'bar',
-            height: 250,
+            height: 350, // Increased height
             width: '100%',
             foreColor: '#fff',        
-            // white text for the dark theme,
             background: 'transparent'
-
         },
         plotOptions: {
             bar: {
                 distributed: true, 
                 columnWidth: '50%', 
-                endingShape: 'rounded' ,
+                endingShape: 'rounded',
                 borderRadius: [4, 4, 0, 0],
                 dataLabels: {
                     position: 'top' // Ensuring data labels appear on top of the bars
@@ -570,12 +570,11 @@
         tooltip: {
             x: {
                 formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
-                    // Display the full channel name in the tooltip
-                    return channels[dataPointIndex]
+                    return channels[dataPointIndex]; // Display the full channel name in the tooltip
                 }
             }
         },                
-         y: {
+        y: {
             formatter: function (value) {
                 return Math.round(value); // Tooltip also shows rounded values
             }
@@ -594,8 +593,8 @@
         xaxis: {
             categories: trimmedChannels,
             labels: {
-                rotate: 0, // Rotates labels to handle long text
-                offsetY: 0, // Adjust to position the labels higher above the bar
+                rotate: -45, // Rotates labels to handle long text
+                offsetY: 0,
                 style: {
                     cssClass: 'custom-xaxis-label',
                 },
@@ -609,7 +608,7 @@
             tickAmount: 4,
             labels: {
                 formatter: function (value) {
-                    return Math.round(value); // Ensuring y-axis labels are whole numbers
+                    return Math.round(value / 1000) + 'K'; // Format y-axis labels with suffixes
                 }
             }
         },
@@ -635,78 +634,75 @@
     var chart = new ApexCharts(document.querySelector("#channel-views-chart"), options);
     chart.render();
     setTimeout(() => {
-        chart.updateOptions({
-        });
-      
-      }, 1000);
+        chart.updateOptions({});
+    }, 1000);
+    
     var originalOptions = chart.w.config;
-
+    
     // Clone the options and change text color to black for exporting
     var channel_views_options = JSON.parse(JSON.stringify(originalOptions));
-    channel_views_options.chart.foreColor = '#000'; // Set text color to black
-    channel_views_options.chart.background = '#FFF'; // Set background to white for contrast
-    channel_views_options.chart.height = 300; // Set text color to black
-    channel_views_options.chart.width = 300; // Set background to white for contrast
+    channel_views_options.chart.foreColor = '#000';
+    channel_views_options.chart.background = '#FFF';
+    channel_views_options.chart.height = 300;
+    channel_views_options.chart.width = 300;
     channel_views_options.title.text = "barchart for views";
-    channel_views_options.xaxis.categories = channels
-    channel_views_options.xaxis.labels = {show: false}
-    channel_views_options.legend.show = true
-    channel_views_options.fill = {}
-
-    var options_likes = options
+    channel_views_options.xaxis.categories = channels;
+    channel_views_options.xaxis.labels = { show: false };
+    channel_views_options.legend.show = true;
+    channel_views_options.fill = {};
+    
+    var options_likes = options;
     options_likes['series'] = [{
         name: 'Likes',
         data: likes
-    }]
-
+    }];
+    
     var chart = new ApexCharts(document.querySelector("#channel-likes-chart"), options_likes);
     chart.render();
     setTimeout(() => {
-        chart.updateOptions({
-        });
-      
-      }, 1000);
+        chart.updateOptions({});
+    }, 1000);
+    
     var originalOptionslikes = chart.w.config;
-
+    
     // Clone the options and change text color to black for exporting
     var channel_likes_options = JSON.parse(JSON.stringify(originalOptionslikes));
-    channel_likes_options.chart.foreColor = '#000'; // Set text color to black
-    channel_likes_options.chart.background = '#FFF'; // Set background to white for contrast
-    channel_likes_options.chart.height = 300; // Set text color to black
-    channel_likes_options.chart.width = 300; // Set background to white for contrast
+    channel_likes_options.chart.foreColor = '#000';
+    channel_likes_options.chart.background = '#FFF';
+    channel_likes_options.chart.height = 300;
+    channel_likes_options.chart.width = 300;
     channel_likes_options.title.text = "barchart for likes";
-    channel_likes_options.xaxis.categories = channels
-    channel_likes_options.xaxis.labels = {show: false}
-    channel_likes_options.legend.show = true
-    channel_likes_options.fill = {}
-
-
-    var options_subscribers = options
+    channel_likes_options.xaxis.categories = channels;
+    channel_likes_options.xaxis.labels = { show: false };
+    channel_likes_options.legend.show = true;
+    channel_likes_options.fill = {};
+    
+    var options_subscribers = options;
     options_subscribers.series = [{
-        name: 'Subscribtions',
+        name: 'Subscriptions',
         data: subscribers
-    }]
-
+    }];
+    
     var chart = new ApexCharts(document.querySelector("#channel-subs-chart"), options_subscribers);
     chart.render();
     setTimeout(() => {
-        chart.updateOptions({
-        });
-      
-      }, 1000);
+        chart.updateOptions({});
+    }, 1000);
+    
     var originalOptionssubs = chart.w.config;
-
+    
     // Clone the options and change text color to black for exporting
     var channel_subs_options = JSON.parse(JSON.stringify(originalOptionssubs));
-    channel_subs_options.chart.foreColor = '#000'; // Set text color to black
-    channel_subs_options.chart.background = '#FFF'; // Set background to white for contrast
-    channel_subs_options.chart.height = 300; // Set text color to black
-    channel_subs_options.chart.width = 300; // Set background to white for contrast
-    channel_subs_options.title.text = "barchart for Subscribtions";
-    channel_subs_options.xaxis.categories = channels
-    channel_subs_options.xaxis.labels = {show: false}
-    channel_subs_options.legend.show = true
-    channel_subs_options.fill = {}
+    channel_subs_options.chart.foreColor = '#000';
+    channel_subs_options.chart.background = '#FFF';
+    channel_subs_options.chart.height = 300;
+    channel_subs_options.chart.width = 300;
+    channel_subs_options.title.text = "barchart for Subscriptions";
+    channel_subs_options.xaxis.categories = channels;
+    channel_subs_options.xaxis.labels = { show: false };
+    channel_subs_options.legend.show = true;
+    channel_subs_options.fill = {};
+    
 </script>
 
 <script>
@@ -768,7 +764,8 @@ channelsTags.forEach(function(tags, i) {
 </script>
 
 <script>
-        var mostUsedCategories = jsonData.mostUsedCategories
+    var mostUsedCategories = jsonData.mostUsedCategories
+    var durations = jsonData.durations
         
 
 var colorPalette = ['#00E396', '#008FFB', '#FEB019', '#FF4560', '#775DD0', /* more colors */ ];

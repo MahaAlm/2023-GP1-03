@@ -360,15 +360,21 @@ label:hover {
         function previewMultipleImages() {
             var files = document.getElementById('upload-photo').files; // Make sure this matches your input's ID
             var label = document.getElementById('upload-label');
+            var imageWarning = document.getElementById('image-warning');
+            var imageContainer = document.getElementById('image-container'); // This should match your container's ID
 
             if (files.length > 5) {
-                alert('You can only upload up to 5 images.');
                 document.getElementById('upload-photo').value=''
+                imageContainer.innerHTML = '';
+
+                imageWarning.style.display = 'block';
+                imageWarning.textContent = 'You can only upload up to 5 images.';
                 return; // Exit the function if more than 5 files are uploaded
             } else if (files.length > 0) {
+                imageWarning.style.display = 'none';
+
                 label.textContent = 'Change Image';  // Change the label text
             }
-            var imageContainer = document.getElementById('image-container'); // This should match your container's ID
     
             if (files.length > 0) {
                 label.textContent = 'Change Image';  // Change the label text
@@ -460,7 +466,8 @@ label:hover {
                               <div id="image-container" class="image-container">
                                 <!-- Images are added dynamically here -->
                             </div>
-                            
+                            <div id="image-warning" style="color: red; display: none;">You can only upload up to 5 images.</div>
+
                             
 
  

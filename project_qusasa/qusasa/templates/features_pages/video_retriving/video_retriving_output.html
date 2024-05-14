@@ -314,7 +314,22 @@ transition: transform 0.3s ease;
               </nav>
               </div>
         </div>
-        
+        <div class="mini-container" >
+          <div class="youtube-channels" data-aos="fade-up">
+              <h3>Analysed {{type}}s</h3>
+              <div class="channels-container">
+                  {% for icon_url, channel_name in channels %}
+                      <div class="channel-el">
+                          <img src="{{ icon_url }}" alt="{{ channel_name }}">
+                          <p>{{ channel_name }}</p>
+                      </div>
+                  {% empty %}
+                      <p>No {{type}}s available.</p>
+                  {% endfor %}
+              </div>
+              
+          </div>
+      </div>
         <div class="mini-container" id='section1'>
             <h2 data-aos="fade-up">Download your results:</h2>
         <div class="downlaodables" data-aos="fade-up">
@@ -419,9 +434,7 @@ transition: transform 0.3s ease;
                       </div>
                          
                     </div>
-
                 </div>
-                
             </div>
         </div>
       
