@@ -10,3 +10,6 @@ def get_youtube_client():
 
     return googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
+
+from django.http import HttpResponse
+

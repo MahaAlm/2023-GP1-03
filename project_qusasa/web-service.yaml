@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qusasa-web-service
+spec:
+  type: LoadBalancer  # Add this line if you want an external IP assigned by the cloud provider
+  selector:
+    app: qusasa-web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000

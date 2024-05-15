@@ -2,9 +2,8 @@ import pandas as pd
 from datetime import timedelta
 import re
 from collections import Counter
-from transformers import pipeline
-import torch
-from transformers import pipeline, BertTokenizer, AutoModelForSequenceClassification
+from transformers import pipeline, DistilBertTokenizer, DistilBertForSequenceClassification
+
 import torch
 from .youtube_api import get_youtube_client
 from googleapiclient.errors import HttpError
@@ -580,11 +579,8 @@ def video_analysis(youtube, video_id):
 
 import googleapiclient.discovery
 import pandas as pd
-import pandas as pd
 from datetime import timedelta
-import re
 from collections import Counter
-from transformers import pipeline
 
 
 # #Maha=   AIzaSyB5Mi7IXiOBEq5f7nk_kIiq-bVZ6m25rwE
@@ -699,50 +695,48 @@ def analyse_comments_data(youtube, video_id):
 
     return comments_data
 
-
 def analyze_comments_emotions_for_playlist(comments_df):
     
-    tokenizer = BertTokenizer.from_pretrained('bhadresh-savani/bert-base-go-emotion')
-    model = AutoModelForSequenceClassification.from_pretrained('bhadresh-savani/bert-base-go-emotion')
-
-    # Function to safely analyze emotion (with truncation)
-    def get_emotion(texts):
-      
-      # Ensure the input is a list of strings
-      if isinstance(texts, str):
-          texts = [texts]
-      elif not isinstance(texts, list) or not all(isinstance(t, str) for t in texts):
-          raise ValueError("Input must be a string or a list of strings.")
-
-      # Tokenize and truncate texts
-      inputs = tokenizer(texts, padding=True, truncation=True, max_length=512, return_tensors="pt")
-      
-      # Predict emotions
-      with torch.no_grad():
-          outputs = model(**inputs)
-      logits = outputs.logits
-      predictions = torch.argmax(logits, dim=-1)
-      
-      # Convert predictions to labels
-      label = [model.config.id2label[prediction.item()] for prediction in predictions][0]
-      return label
+    # Set the device to CPU
+    device = torch.device("cpu")
     
-    # Add a new column to the DataFrame for the predicted emotions
+    # Initialize the tokenizer and model using the distilled versions
+    tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+    model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased-finetuned-sst-2-english')
+    model.to(device)  # Ensure the model is using CPU
+
+    # Function to analyze emotion with truncation
+    def get_emotion(texts):
+        if isinstance(texts, str):
+            texts = [texts]
+        elif not isinstance(texts, list) or not all(isinstance(t, str) for t in texts):
+            raise ValueError("Input must be a string or a list of strings.")
+
+        # Tokenize and prepare inputs
+        inputs = tokenizer(texts, padding=True, truncation=True, max_length=512, return_tensors="pt").to(device)
+        
+        # Predict emotions without calculating gradients
+        with torch.no_grad():
+            outputs = model(**inputs)
+        logits = outputs.logits
+        predictions = torch.argmax(logits, dim=-1)
+        
+        # Map predictions to labels
+        labels = [model.config.id2label[pred.item()] for pred in predictions]
+        return labels[0]  # Adjust based on specific needs
+
+    # Apply the get_emotion function to each text entry
     comments_df['emotion'] = comments_df['text'].apply(get_emotion)
 
     # Calculate the frequency of each emotion
     emotion_counts = comments_df['emotion'].value_counts(normalize=True)
-    # Get the top 5 emotions
     top_emotions = emotion_counts.nlargest(5).index.tolist()
 
-    # Create a dictionary to store the top comments for each emotion
+    # Prepare the top comments for each top emotion
     top_comments_by_emotion = {emotion: [] for emotion in top_emotions}
-
-    # Get the top 5 comments for each of the top emotions
     for emotion in top_emotions:
         top_comments = comments_df[comments_df['emotion'] == emotion].nlargest(1, 'likeCount')
         top_comments_by_emotion[emotion] = top_comments['text'].iloc[0]
-        
 
     return emotion_counts, top_comments_by_emotion
 

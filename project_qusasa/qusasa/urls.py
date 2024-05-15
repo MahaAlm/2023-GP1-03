@@ -5,7 +5,7 @@ from django.contrib import admin
 from .admin import admin_site
 from django.conf import settings
 from django.urls import include, path
-from .views import InqListView,update_inquiry
+from .views import update_inquiry
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -118,6 +118,7 @@ urlpatterns = [
     path('user_display_inquiry/<int:history_id>/', views.user_display_inquiry, name='user_display_inquiry'),
 
     path('add_inquiry', views.add_inquiry, name='add_inquiry'),
+    path('healthcheck/', views.health_check, name='healthcheck'),
 
 
 ]

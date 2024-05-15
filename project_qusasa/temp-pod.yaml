@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pg-cleanup-pod
+spec:
+  containers:
+  - name: cleanup
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: postgres-data
+      mountPath: /data/pgdata
+  volumes:
+  - name: postgres-data
+    persistentVolumeClaim:
+      claimName: postgres-pvc

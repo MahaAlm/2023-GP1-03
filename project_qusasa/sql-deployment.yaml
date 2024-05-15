@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: qusasa-database-secrets
+              key: DB_NAME
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: qusasa-database-secrets
+              key: DB_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: qusasa-database-secrets
+              key: DB_PASS
+        - name: PGDATA  # Define the environment variable for the PostgreSQL data directory
+          value: /var/lib/postgresql/data/pgdata  # Set to a subdirectory in the mounted volume
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data/pgdata  # Mount the volume to the new subdirectory
+          name: postgresdb
+      volumes:
+      - name: postgresdb
+        persistentVolumeClaim:
+          claimName: postgres-pvc

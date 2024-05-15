@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qusasa-web-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qusasa-web
+  template:
+    metadata:
+      labels:
+        app: qusasa-web
+    spec:
+      containers:
+        - name: qusasa-web
+          image: qusasa-cloud-image:v2  # Consider using a specific version tag instead of latest for stability
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DEBUG
+              value: "True"
+            - name: DEVELOPER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: DEVELOPER_KEY
+            - name: 'EMAIL_ADD'
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: EMAIL_ADD
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_HOST_USER
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: EMAIL_HOST_USER
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: OPENAI_API_KEY
+            - name: PASS_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: PASS_EMAIL
+            - name: PASS_IG
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: PASS_IG
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-database-secrets
+                  key: DB_CONNECTION_STRING
+            - name: REDIS_URL
+              value: redis://redis:6379
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-secrets
+                  key: SECRET_KEY
+            - name: USER_IG
+              value: "nanafairy07"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-database-secrets
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-database-secrets
+                  key: DB_PASS
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-database-secrets
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: qusasa-database-secrets
+                  key: DB_NAME
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: 8000
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: 8000
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
