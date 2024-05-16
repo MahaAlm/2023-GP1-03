@@ -163,7 +163,7 @@
                         </header>
                         
                         <div class="card__body">
-                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y" }}</div>
+                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y h:i A" }}</div>
                             
                         </div>
                     </a>
@@ -185,7 +185,7 @@
                         </header>
                         
                         <div class="card__body">
-                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y" }}</div>
+                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y h:i A" }}</div>
                             
                         </div>
                     </a>
@@ -208,7 +208,7 @@
                         </header>
                         
                         <div class="card__body">
-                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y" }}</div>
+                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y h:i A" }}</div>
                             
                         </div>
                     </a>
@@ -226,12 +226,12 @@
                             <img src="{% static 'qusasa/images/report.png' %}"/>
                             <div class="feature-name">
     
-                                    Channel Analysis {{ history.id }}
+                                    Channel Analysis ({{ history.analysis_data.title }})
                             </div>
                         </header>
                         
                         <div class="card__body">
-                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y" }}</div>
+                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y h:i A" }}</div>
                             
                         </div>
                     </a>
@@ -254,7 +254,7 @@
                         </header>
                         
                         <div class="card__body">
-                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y" }}</div>
+                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y h:i A" }}</div>
                            
                         </div>
                     </a>
@@ -277,7 +277,7 @@
                         </header>
                         
                         <div class="card__body">
-                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y" }}</div>
+                            <div class="card__category youtube">{{ history.created_at|date:"M d, Y h:i A" }}</div>
                            
                         </div>
                     </a>

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "spheric-temple-403913",
+  "private_key_id": "b12f2510f11c13f9518577862d14a9e359260523",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDu7bAXpxH/hYEw\nfhnwIbxjEVf4PPFFPDB0DUpK+woXyIWCoqN91J05APsLieT4UJz2isFQGVuo/xny\nJPjukOz5TyNMj8Ax9tqFM4/T9E7wvGOY+gMjbL0PDV5It9r3DHmNfx0hbYeGfeIU\ncztrAbEVjxMVk+wk4Gv6HmWAfifcHfpEbimv2zfZLqjX3/LJewVuRLdf21kbgbCj\nOZ58b6iFHbhlGEkJ37zQ33YeeQT9Ku0piMgIDw9hKkZDgE2gRVtq0FNbOzL9wko1\n2+mznFuXox3GCZpZAjOF///LI7F+jTMf/iOKwC9en1ONdWlrg4U1ZOVFmqNT0coO\n1DfUNNkFAgMBAAECggEAHq1A60CFtI+RH0dJkEXcmMGs0FAO0Etikzvzmn3x9UzH\nK5czM6A9UYjZMsmRLvq2tIbrPBwNYzzhuW/a0FKmQnpRN27Lh/7AXtLYeCfJjOo7\nRXRwO7el7I1UWjTU9dxRrQOxm02jVXbLNMH40ovkjzaQBji4XKG9617EvIM2HfIx\n4goEnUzkjTAvC8AP+er7gXREWLIo6A7b3FjSH/Fqi91mSLVKYfB0FMaEfKbDkS/e\nZmALFAcrIcP3wd32Nld50FpfLPl0bULgKrrzf58PcpoOk9JtlKu0GlgW6CpK3Z6r\niIVIR+w5XXHZNSOsiijGvXM6siE/zoHR4Zhvi6CsrwKBgQD4XFxwS7Jpl1/XoEko\nQqkNtoEq1+4rWosN9aykuQezhwmtoddsOpXBKAfhxh03xXZIqemAq6je4Vtogjtn\nr7+UZDDKFsOQqjpqlsZmHX3nKIOZP2eu9ZHm0fKttFAANBhP7IlOw2lOpdePLaKT\nDth40CzG2qS0RUWTGooUg10cWwKBgQD2Rw4RlG0kSvFqxHZp1z8VoFBqp8PA96Bu\ntUHvvvKg4LDPii0hSVLGXZIo7eIhdlWwCXFyaIP4KBf1WoGqxX9t645BMs1qqNwm\nN2GgiEY/M/LtJDJQLda2bJS6kk+AMJChFaWTcAX1EfIU78L3SRS2gKHCtb5lt3Dd\n/323jZ9eHwKBgQDF8odSkWKPujCPYZctWYP4BAALL7MKJs4xwB9r4nV65yQVmapi\n/oahPtCZaBedfep6m8IZ5bdgfOkn8LR8PZ1KHlismVwhjyukDKvwc40Hkkjg+aIf\n1mYFPExZmh8xKlQ+T15YwnLKVm/qFAtBflGWaQVnMJiZfaSoTDzFgLXThQKBgE4Z\nZGXAywe6WGrCWMbhwpiqGTZpc1OLc64H/xv3UtwfxRJbwEoRBZXwcHxYS+DOtQe5\nRufAKzGUDVz6UaqFLQ7/p0IXyTqsx/u6jlQpQxWh9MStOONiVffN4TB1W47MV+Et\niy+BU/JOuZVYH1zqKQ5jJmkn13RMQxezgPunhsWDAoGAFb3yFxLzPKwRQdCLAikT\nO4eShwBgIOqLgi8wILYURmRwCbULWlDlOrf0YDeMskuinh2gZkZzqqZ3W3afSJ9m\ndGEseBITBnBNtCKqAf9Kjz4UuksxoE2IoIfQxpdFxolSN2pr0MmTLj2OxcCZRrUR\nHD8xDW6W1hWAhHcpcDoXA08=\n-----END PRIVATE KEY-----\n",
+  "client_email": "qusasa@spheric-temple-403913.iam.gserviceaccount.com",
+  "client_id": "103231487818160067696",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/qusasa%40spheric-temple-403913.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
