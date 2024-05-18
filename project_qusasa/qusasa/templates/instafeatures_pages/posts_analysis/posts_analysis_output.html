@@ -1,0 +1,727 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qusasa | Instagram Post Analysis</title>
+    <!-- Linking CSS -->
+    <link rel="stylesheet" href="{% static 'qusasa/css/signup.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/cards.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/feature_details.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/output.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/post_analysis_output.css' %}" />
+
+    <link href="https://cdn.rawgit.com/michalsnik/aos/2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/michalsnik/aos/2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- Make sure to include the cloud layout plugin after the main D3 library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Include Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+    <!-- Include jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Owl Carousel JS File -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+
+    <script src="https://kit.fontawesome.com/b50b47369c.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="{% static 'qusasa/images/Qusasa end.png' %}" type="image/png">
+
+ 
+
+     
+  </head>
+  <body>
+    
+    <a class="log-out" href="#popup1"><i class="fa-solid fa-right-from-bracket"></i> Exit Analysis</a>
+
+    
+    <div class="output-container">
+
+        <div class="mini-container">
+            <div class="output-header " data-aos="fade-up">
+                <h1>Your Post Analysis is ready!</h1>
+                <p>Our post analysis will give you a deeper insight into the post, what does influence its performance, and a closer look on its comment and sentiment...</p>
+            </div>
+        </div>
+        
+        <div class="mini-container">
+            <h2 data-aos="fade-up">Download your results:</h2>
+            <div class="downlaodables" data-aos="fade-up">
+            <div class="download-dataset download-el">
+                <i class="fa-solid fa-table"></i>
+                <div class="download-text">
+                    <div class="text">
+                        <h3>The Post datasets</h3>
+                    <p>A dataset for the post info</p>
+                    </div>
+                    
+                    <div class="button">
+                        <button id="download-dataset-button">Download the dataset</button>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="download-report download-el">
+                <i class="fa-solid fa-file-contract"></i>
+                <div class="download-text ">
+                    <div class="text">
+                        <h3>Analysis report</h3>
+                        <p>including all the graphs, statistics, and interpretaions presented.</p>
+                    </div>
+                    
+                    <div class="button">
+                        <a href="{% url 'download_docx' filename=docx_file %}"><button>Download the report</button></a>
+
+                    </div>
+                    
+                </div>
+            </div>
+            </div>
+
+        </div>
+
+        <div class="mini-container stats-graphs-container">
+            <div class="stats-graphs" data-aos="fade-up">
+                <h1>Get An Overview</h1>
+                <p>take a look over the post in general, what is it about and how is it performing</p>
+                <div class="overview">
+                    <div class="header"style=" margin-top:1rem; padding: 0;">
+                        <div class="owl-carousel" style="width:50%; margin: 1rem; margin:0; padding: 0;" >
+                            {% for i in num_pics %}
+                            
+                            <div class="item" style="min-width: 100%; width: 100%; min-height: auto;">
+                                <img style="margin: 0;" src="{% static 'qusasa/images/thumbnial_url' %}{{i}}.jpg" alt=""/>
+                            </div>
+                            {% endfor %}
+                        
+                        </div>
+
+                        <div class="header-info">
+                            {% if description != ''%}
+                            <div class="desc" style="margin-top: 0;">
+                            <h3 style="display:flex; flex-direction: row; align-content: center; align-items:center;"><img src="{% static 'qusasa/images/icon_url.jpg'%}" style="height: 40px; width: 40px; border-radius:50%; margin: 0 0.5rem;" alt=""><p style="font-size:1.2rem; margin: 0" > by {{owner}}</p></h3>
+                            <div class="acc-stat">
+                                {% if caption == '' %}
+                                No Caption
+                                {%else%}
+                                {{caption}}
+                                {%endif%}
+                            </div>
+                            </div>
+                            {%endif%}
+                        </div>
+                        
+                    </div>
+                    
+                        <h1 class="playlist-stats-h1">Post statistics</h1>
+                        <div class="video-stats">
+                            <div class="video-stat">
+                                <h3 style="text-wrap: nowrap;">{{publishedAt}}</h3>
+                                <p>publishedAt</p>
+                            </div>
+                            
+                     
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{LikeCount}}">0</h3>
+                                <p>total Likes</p>
+                            </div>
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{CommentCount}}">0</h3>
+                                <p>total Comments</p>
+                            </div>
+                         
+                        
+                        </div>
+                        
+                        <div class="playlist-wordtags">
+                        <h1 style="margin-bottom: 0.5rem;">Post Word tags</h1>
+                        <p style="margin-top: 0; margin-bottom: 3rem;">Across caption and comments</p>
+                        <div id="wordcloud0" class="wordcloud"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mini-container stats-graphs-container">
+            <div class="stats-graphs" data-aos="fade-up">
+                <h1>Look into the Comments</h1>
+                <div class="overview">
+                    
+                    <div class="chart" style="box-shadow: none; width: 100%;">
+                        <p>Follow comments counts for each month</p>
+                      </div>
+                      <div id="lineChart" class="chart" style="box-shadow: none; width: 100%"></div>
+                    
+                    
+                    <div class="emotions_radchart" style="margin-bottom: 5rem; margin-top: 5rem; width: 100%;">
+                        <h1 data-aos="fade-up">Commetns emotions distribution</h1>
+                    <p data-aos="fade-up">Get a deeper understanding of why the viewers likes this content through comments sentiment analysis</p>
+                    <div id="emotions_radchart" data-aos="fade-up" style="width: 100%;"></div>
+                    </div>
+                    
+
+                    <div class="emotions-examples" style="margin-bottom: 5rem;">
+                        <h1 data-aos="fade-up">Look into the top emotions</h1>
+                        <p data-aos="fade-up">the top comments from the top emotions</p>
+                        <div class="examples">
+                            {% for emotion, comment in comment_sentiments.items %}
+                            <div class="example" data-aos="fade-up">
+                                <div class="emotion"><h3>{{ emotion }}</h3></div>
+                                <div class="ex">
+                                    <p class="truncated">{{ comment|truncatechars:150 }}</p>
+                                    <p class="full-comment">{{ comment }}</p>
+                                </div>
+                            </div>
+                            {%endfor%}
+                            
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+                
+            
+        </div>
+        </div>
+
+       
+
+
+        
+
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <h2>Are you sure you want to quit the analysis?</h2>
+                <div class="text">
+                    if you did you will not be able to access its content anymore...
+                    <div class="popup-buttons">
+                        <a href="{% url 'base' %}"><button class="yes">Yes I'm sure</button></a>
+                    <a href="#"><button>Go back</button></a>
+                    </div>   
+                </div>
+                
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+   
+
+<script type="text/javascript">
+    const csrftoken = '{{ csrf_token }}';
+</script>
+
+<script>$(document).ready(function(){
+    $(".owl-carousel").owlCarousel({
+        // Owl Carousel options
+        items: 1,
+        center: true,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        nav: false,
+        });
+});
+</script>
+
+<script>
+    // Set timeout to refresh the page after 1000 seconds
+    setTimeout(function() {
+        // Reload the current page
+        $(".owl-carousel").owlCarousel({
+            // Owl Carousel options
+            items: 1,
+            center: true,
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true,
+            nav: false,
+            });
+    }, 3000); // 1000 seconds
+</script>
+
+<script id="json-data" type="application/json">{{ json_data|safe }}</script>
+
+
+<script>
+    var myColors = ['#D5A9FF', '#7EF7D9', '#12CEE6', '#4686FF', '#FFFFFF'];
+
+    function drawWordCloud(selector, words) {
+        var getRandomSize = function() {
+            return 10 + Math.random() * 30; // Random size between 10 and 50
+        };
+    
+        // Set up the word cloud layout
+        var layout = d3.layout.cloud()
+            .size([800, 300]) // The size of the word cloud
+            .words(words.map(function(d) {
+                return {text: d, size: getRandomSize()}; // random size to each word
+            }))
+            .padding(2) 
+            .rotate(0) 
+            .font("Raleway")
+            .fontSize(function(d) { return d.size; })
+            .on("end", draw);
+    
+        layout.start();
+    
+        // Draw the word cloud
+        function draw(words) {
+            var svg = d3.select(selector).append("svg")
+                .attr("width", layout.size()[0])
+                .attr("height", layout.size()[1])
+                .append("g")
+                .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")");
+    
+            svg.selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) { return d.size + "px"; }) 
+                .style("font-family", "Raleway")
+                .style("font-weight", "bold") // Set the font family
+                .style("fill", function(d, i) { return myColors[i % myColors.length]; }) 
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });
+        }
+    }
+    
+
+postTags = jsonData.top_keywords
+drawWordCloud("#wordcloud0" , postTags);
+
+</script>
+
+<script>
+    function deepCopy(obj, visited = new WeakMap()) {
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+        if (visited.has(obj)) {
+            return visited.get(obj);
+        }
+        let copy;
+        if (Array.isArray(obj)) {
+            copy = [];
+            visited.set(obj, copy);
+            obj.forEach((item, index) => {
+                copy[index] = deepCopy(item, visited);
+            });
+            return copy;
+        }
+        if (obj instanceof Object) {
+            copy = {};
+            visited.set(obj, copy);
+            Object.keys(obj).forEach(key => {
+                // Skip properties that cause circular references
+                if (key !== 'ctx') {
+                    copy[key] = deepCopy(obj[key], visited);
+                }
+            });
+            return copy;
+        }
+        throw new Error('Unable to copy object!');
+    }
+</script>
+
+
+<script>
+    var jsonData = JSON.parse(document.getElementById('json-data').textContent);
+    console.log(jsonData)
+    commentDates = jsonData.CommentDate[0]
+
+    console.log(commentDates)
+    // Convert dates to month-year format and count occurrences
+    let commentCountsPerMonth = commentDates.reduce((acc, date) => {
+    // Extract the year and month part from the date
+    let monthYear = date.substring(0, 7); // "YYYY-MM"
+    // Increment the count for the monthYear
+    acc[monthYear] = (acc[monthYear] || 0) + 1;
+    return acc;
+    }, {});
+
+    // Sort the months
+    let sortedMonths = Object.keys(commentCountsPerMonth).sort();
+
+    // Extract counts for the sorted months
+    let commentCounts = sortedMonths.map(month => commentCountsPerMonth[month]);
+
+    // Convert sortedMonths into month names, assuming you need them for the chart
+    let monthNames = sortedMonths.map(month => {
+    let date = new Date(month + "-01"); // Temporary date to extract the month name
+    return date.toLocaleString('default', { month: 'long', timeZone: 'UTC' });
+    });
+var lineChartOptions = {
+    series: [{
+      name: "Total Comments by month",
+      data: commentCounts
+    }],
+    chart: {
+      type: 'line',
+      height: 350,
+      width: '100%',
+      background: 'transparent'
+    },
+    stroke: {
+      width: 5,
+      curve: 'smooth'
+    },
+    xaxis: {
+      type: 'Month',
+      categories: monthNames
+    },
+    
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: 'dark',
+        gradientToColors: [ '#FDD835'],
+        shadeIntensity: 1,
+        type: 'horizontal',
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [0, 100]
+      },
+    },
+    
+    markers: {
+      size: 4,
+      colors: ["#FFA41B"],
+      strokeColors: "#fff",
+      strokeWidth: 2,
+      hover: {
+        size: 7,
+      }
+    },
+    grid: {
+            show: false
+        },
+        theme: {
+            mode: 'dark'
+        },
+  
+  };
+
+  // Render the line chart
+  var lineChart = new ApexCharts(document.querySelector("#lineChart"), lineChartOptions);
+  lineChart.render();
+  setTimeout(() => {
+    lineChart.updateOptions({
+    });
+  
+  }, 1000);
+
+  var trend_chart = deepCopy(lineChart.w.config);
+  trend_chart.chart.foreColor = '#000'; // Set text color to black
+  trend_chart.chart.background = '#FFF'; // Set background to white for contrast
+  trend_chart.chart.height = 300; // Set text color to black
+  trend_chart.chart.width = 500; // Set background to white for contrast
+  trend_chart.title.text = "Comments Counts per Month";
+  trend_chart.legend.show = true
+  trend_chart.fill = {}
+</script>
+
+<script>
+    document.getElementById('download-dataset-button').addEventListener('click', function() {
+        window.location.href = "{% url 'post_dataset_zipped_output' %}";
+    });
+</script>
+<script id="json-data" type="application/json">{{ json_data|safe }}</script>
+
+<script>
+
+    var emotionData = jsonData.sentiments;
+
+        const emotionDatasliced = Object.fromEntries(
+        Object.entries(emotionData).slice(0, 10)
+        );
+
+
+    var emotions = Object.keys(emotionDatasliced);
+    var emotionValues = Object.values(emotionDatasliced).map(value => Math.round(value * 100));  // Convert to percentages
+
+
+var options = {
+    chart: {
+        type: 'bar',
+        height: 500,
+        width: '100%',
+        foreColor: '#fff',        
+        // white text for the dark theme,
+        background: 'transparent'
+
+    },
+    plotOptions: {
+        bar: {
+            horizontal: true,
+            distributed: true, 
+            columnWidth: '50%', 
+            endingShape: 'rounded' ,
+            dataLabels: {
+                position: 'top' // Ensuring data labels appear on top of the bars
+            }
+        }
+    },
+    
+    theme: {
+        mode: 'dark',
+        palette: 'palette1'
+    },
+    dataLabels: {
+        enabled: false
+    },
+    series: [{
+        name: 'Emotion Percentage',
+        data: emotionValues
+    }],
+    xaxis: {
+        categories: emotions,
+        
+    },
+    grid: {
+        show: false
+    },
+    legend: {
+        show: false
+    },
+    fill: {
+        type: 'gradient',
+        gradient: {
+            shade: 'light',
+            type: "vertical",
+            shadeIntensity: 0.5,
+            gradientToColors: undefined, 
+            inverseColors: true,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+            stops: [0, 100]
+        }
+    },
+    stroke: {
+    lineCap: 'round' // This gives a slight radius effect on the chart
+}
+};
+    
+
+    var emotions_chart = new ApexCharts(document.querySelector("#emotions_radchart"), options);
+    emotions_chart.render();
+
+    setTimeout(() => {
+        emotions_chart.updateOptions({
+        });
+      
+      }, 1000);
+
+      var chart9Options = emotions_chart.w.config;
+
+        var emotions_chartOpt = deepCopy(chart9Options);
+        emotions_chartOpt.chart.foreColor = '#000'; // Set text color to black
+        emotions_chartOpt.chart.background = '#FFF'; // Set background to white for contrast
+        emotions_chartOpt.chart.height = 300; // Set text color to black
+        emotions_chartOpt.chart.width = 300; // Set background to white for contrast
+        emotions_chartOpt.title.text = "Comments Sentiment";
+        emotions_chartOpt.legend.show = true
+        emotions_chartOpt.fill = {}
+
+</script>
+
+
+<script>
+    function animateNumber(element, start, end, duration) {
+        let startTime = null;
+    
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min((timeElapsed / duration), 1); // Ensure progress doesn't exceed 1
+    
+            element.textContent = Math.floor(progress * (end - start) + start);
+    
+            if (timeElapsed < duration) {
+                requestAnimationFrame(animation);
+            }
+        }
+    
+        requestAnimationFrame(animation);
+    }
+    
+    const numberElements = document.querySelectorAll('.number');
+    
+    numberElements.forEach(numberElement => {
+        const targetValue = parseInt(numberElement.getAttribute('data-target'), 10);
+        animateNumber(numberElement, 0, targetValue, 4000); // 2000ms = 2 seconds for animation
+    });
+    
+</script>
+
+
+<script>$(document).ready(function(){
+    $(".owl-carousel").owlCarousel({
+        // Owl Carousel options
+        items: 1,
+        center: true,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        nav: true
+        // other options as needed
+    });
+});
+</script>
+
+    <script>
+        AOS.init({
+          duration: 1200, // You can adjust this value for animation duration
+        });
+      </script>
+
+      <script>
+        // Function to handle the rendering and conversion of a single chart to a data URI
+    // Function to handle the rendering and conversion of a single chart to a data URI
+    function convertChartToDataURI(chartOptions, callback) {
+        console.log('hi');
+        let exportContainer = document.createElement('div');
+        exportContainer.style.position = 'absolute';
+        exportContainer.style.left = '-9999px';
+        exportContainer.style.top = '-9999px';
+        document.body.appendChild(exportContainer);
+    
+        let modifiedChartOptions = {
+            ...chartOptions,
+            chart: {
+                ...chartOptions.chart,
+                events: {
+                    rendered: function(chartContext, config) {
+                        console.log('rendered');
+                    }
+                }
+            }
+        };
+    
+        let exportChart = new ApexCharts(exportContainer, modifiedChartOptions);
+        exportChart.render();
+    
+        // Manually trigger the rendered event for testing
+        setTimeout(() => {
+            exportChart.dataURI().then(({ imgURI }) => {
+                console.log('Manual trigger');
+                exportChart.destroy();
+                document.body.removeChild(exportContainer);
+                callback(null, imgURI);
+            });
+        }, 1000); // Adjust this delay as needed
+    }
+
+    function convertImageToDataURI(url, callback) {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    callback(null, reader.result); // reader.result contains the Data URI
+                };
+                reader.onerror = (error) => {
+                    callback(error, null);
+                };
+                reader.readAsDataURL(blob);
+            })
+            .catch(error => callback(error, null));
+    }
+    
+    
+    
+    function processAndSendChartsAndThumbnails(baseImageUrl, chartsOptions, numberOfThumbnails) {
+        // Generate array of image URLs for thumbnails
+        let thumbnailUrls = [];
+        console.log(numberOfThumbnails)
+        for (let i = 0; i < numberOfThumbnails; i++) {
+            thumbnailUrls.push(`${baseImageUrl}${i}.jpg`); // Adjust URL pattern as needed
+        }
+    
+        // Convert thumbnail URLs to Data URIs
+        let thumbnailPromises = thumbnailUrls.map(url => {
+            return new Promise((resolve, reject) => {
+                convertImageToDataURI(url, (error, imgURI) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(imgURI);
+                    }
+                });
+            });
+        });
+    
+        // Convert chart options to Data URIs
+        let chartImagesPromises = chartsOptions.map(options => {
+            return new Promise((resolve, reject) => {
+                convertChartToDataURI(options, (error, chartImgURI) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(chartImgURI);
+                    }
+                });
+            });
+        });
+    
+        // Wait for thumbnail conversion to complete
+        Promise.all(thumbnailPromises).then(thumbnailData => {
+            // Thumbnails are ready, now process charts
+            Promise.all(chartImagesPromises).then(chartData => {
+                // Both thumbnails and charts are ready, send to server
+                fetch('/doc_post/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ chartData:chartData, thumbnailData:thumbnailData })
+                }).then(response => response.json())
+                .then(data => {
+                    console.log(data); // Handle any response from the server
+                }).catch(error => {
+                    console.error('Error sending images to the server:', error);
+                });
+            }).catch(error => {
+                console.error('Error converting charts to Data URIs:', error);
+            });
+        }).catch(error => {
+            console.error('Error converting thumbnails to Data URIs:', error);
+        });
+    }
+    
+    // Example usage
+    let baseImageUrl = "{% static 'qusasa/images/thumbnial_url' %}"; // Adjust the path as needed
+    let numberOfThumbnails = jsonData.num_pics; // Assuming you have 6 thumbnails
+    let chartsOptions = [trend_chart, emotions_chartOpt];
+    processAndSendChartsAndThumbnails(baseImageUrl, chartsOptions, numberOfThumbnails);
+    
+    </script>
+  </body>
+</html>
+

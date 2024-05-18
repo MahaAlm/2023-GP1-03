@@ -1,0 +1,2242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qusasa | YouTube Playlist Analysis</title>
+    <!-- Linking CSS -->
+    <link rel="stylesheet" href="{% static 'qusasa/css/signup.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/cards.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/feature_details.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/output.css' %}" />
+    <link rel="stylesheet" href="{% static 'qusasa/css/playlist_analysis_output.css' %}" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    
+    <link href="https://cdn.rawgit.com/michalsnik/aos/2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/michalsnik/aos/2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- Make sure to include the cloud layout plugin after the main D3 library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Include Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+    <!-- Include jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Owl Carousel JS File -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+
+    <script src="https://kit.fontawesome.com/b50b47369c.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="{% static 'qusasa/images/Qusasa end.png' %}" type="image/png">
+
+    <style>
+            html {
+                scroll-behavior: smooth;
+    
+            }
+    
+            body {
+                scroll-behavior: smooth;
+    
+            }
+            .table-container {
+                width: 90%;
+                max-width: 90%;
+                overflow-x: scroll; /* Always show horizontal scrollbar */
+                border-radius: 8px;
+                -webkit-overflow-scrolling: touch; /* Improves scrolling on touch devices */
+                scrollbar-width: thin; /* For Firefox */
+                scrollbar-color: #888 #f1f1f1; /* For Firefox: scrollbar thumb and track colors */
+            }
+            
+            /* For Webkit (Chrome, Safari, etc.) */
+            .table-container::-webkit-scrollbar {
+                height: 8px; /* Height of the scrollbar */
+            }
+            
+            .table-container::-webkit-scrollbar-thumb {
+                background: #888; /* Color of the scrollbar thumb */
+                border-radius: 4px;
+            }
+            
+            .table-container::-webkit-scrollbar-track {
+                background: #f1f1f1; /* Color of the scrollbar track */
+                border-radius: 4px;
+            }
+            table {
+                position: relative;
+                border-collapse: collapse;
+                width: 100%; /* Adjusted to fill the container */
+                font-size: 0.7rem;
+                transition: 0.3s ease; /* Smooth transition for background color */
+            }
+            
+    
+        /* Style the table headers and cells */
+        th, td {
+            text-align: left;
+            padding: 8px; /* Adjust padding as needed */
+            color: white; /* White text */
+            border-bottom: 1px solid rgba(48, 38, 114, 0.617); /* White borders between rows */
+            transition: background-color 0.3s; /* Transition for background color change */
+    
+        }
+    
+        /* Style for the table headers */
+        th {
+            background-color: #4f508a; /* Darker shade of purple for headers */
+        }
+    
+        /* Style for the table cells */
+        td {
+            background-color: #777ca9; /* Muted purple background for cells */
+        }
+    
+            /* When hovering over the table, darken the shade of headers and cells */
+        table:hover th {
+            background-color: #454597; /* Darker shade for headers on table hover */
+        }
+    
+        table:hover td {
+            background-color: #6e75b0; /* Darker shade for cells on table hover */
+        }
+    
+        table:hover {
+            transform: translateY(-10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .dataset-preview h3 {
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            width: 90%;
+            text-align: left;
+    
+    
+        }
+    
+        .dataset-preview p {
+            text-align: left;
+            font-size: 1rem;
+            margin: 0;
+            width: 90%;
+        }
+    
+        .loading-spinner {
+            visibility: hidden;
+            margin: 1rem;
+        }
+    
+        .loading-spinner img {
+            max-height: 10rem;
+        }
+    
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+    
+        @keyframes float1 {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    
+        .floating {
+            animation: float 3s ease-in-out infinite;
+            width: 300px;
+        }
+    
+        #response1  {
+            visibility: hidden;
+            display: none;
+        }
+    
+        #response  {
+            visibility: hidden;
+            display: none;
+        }
+        #response2  {
+            visibility: hidden;
+            display: none;
+        }
+    
+        nav {
+            background-color: #5f4e9c; /* Light purple background color */
+            padding: 10px;
+            border-radius: 10px; /* Rounded edges */
+        }
+    
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+    
+        nav ul li {
+            display: inline;
+            margin-right: 10px; /* Adjust spacing between links */
+        }
+    
+        nav ul li a {
+            text-decoration: none;
+            color: white; /* Default color */
+        }
+    
+        nav ul li a:hover {
+            color: purple; /* Color change on hover */
+        }
+    
+        /* Style for the separator "|" */
+        nav ul li:not(:last-child)::after {
+            content: "|";
+            margin-left: 5px;
+            margin-right: 2px;
+        }
+    
+        /*
+        html {
+            scroll-behavior: smooth;
+        }
+        */
+    
+        .ask-Ai {
+            text-align: left;
+        }
+        
+    
+        .ask-ai-intro {
+            height: 38rem;
+            background-image: url("{% static 'qusasa/images/ai_background.png'%}");
+            width: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        .graphs_background {
+            background-image: url("{% static 'qusasa/images/graphs_background.png'%}");
+            justify-content: start;
+            align-items: start;
+            text-align: left;
+            padding-left: 5rem;
+    
+        }
+    
+        .graphs_background h2 {
+            width: 50%;
+        }
+    
+        .ask-ai-intro h2 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+        }
+    
+        .ask-ai-intro button {
+            border: none;
+            border-radius: 50%;
+            padding: 0;
+            margin: 0;
+            font-size: 3.5rem;
+            color: white;
+            background: #454597;
+            height: 8rem;
+            width: 8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+            transition: .2s ease-in-out;
+        }
+    
+        .ask-ai-intro button:hover {
+            font-size: 3.8rem;
+            transition: .2s ease-in-out;
+    
+                
+            
+    
+        }
+        .ask-ai-intro button i {
+    
+            padding: 0;
+            margin: 0;
+            margin-left: 0.3rem;
+    
+        }
+    
+        .explanation-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 38rem;
+        }
+    
+        .explanation{
+            background: linear-gradient(180deg,rgb(23, 37, 111)0, #231e91); 
+            padding: 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 30px;
+            margin-bottom: 3rem;
+        }
+    
+        .explanation{
+            background: linear-gradient(180deg,rgb(23, 37, 111)0, #231e91); 
+            padding: 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 30px;
+            margin-bottom: 3rem;
+        }
+    
+    
+        .explanation span {
+            font-size: 1.5rem;
+        }
+        .explanation img{
+            max-height: 3rem;
+        }
+    
+        .datasets p{
+            margin-top: 0;
+            font-size: 1.2rem;
+            width: 70%;
+            margin-bottom: 2rem;
+    
+        }
+    
+        .dataset {
+            margin-bottom: 2rem;
+        }
+    
+        .datasets-info {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .dataset {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg,rgb(23, 37, 111)0, #231e91); 
+            border: 1px solid #6e75b0;
+            height: 10rem;
+            width: 12rem;
+            border-radius: 30px;
+            margin-right: 2rem;
+            text-align: center;
+            padding: 0;
+            box-shadow: 0 0 5px 5px #32219e76;
+            cursor: pointer;
+    
+        }
+    
+        .dataset:hover {
+            background: linear-gradient(180deg,rgb(37, 58, 164)0, #2f28ae); 
+    
+        }
+    
+        .dataset p {
+            font-size: 1rem;
+            margin: 0;
+    
+        }
+    
+        .dataset i {
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+    
+        .smaller-datasets {
+            width: 100%;
+        }
+    
+        .smaller-datasets p{
+            font-size: 0.65rem;
+        }
+    
+        .smaller-datasets i {
+            font-size: 1.5rem;
+        }
+    
+        .smaller-datasets .dataset {
+            width: 7.5rem;
+            height: 6.5rem;
+            margin-right: 0rem;
+        }
+        .explanation-container button {
+            padding: 0.8rem 2.5rem;
+            font-family: 'Raleway';
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            background: #4e1fa4;
+            margin-top: 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s ease-in-out;
+            margin-bottom: 0;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+    
+        .explanation-container button i {
+            margin-left: 0.3rem;
+        }
+    
+    
+        .explanation-container button:hover {
+            background: #2b44bf;
+            transition: 0.3s ease-in-out;
+        transform: translate(2px,0);
+        
+        }
+    
+        .popup-dataset {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.718);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .popup-content {
+            background: linear-gradient(180deg,rgb(37, 58, 164)0, #2f28ae); 
+            margin: 20% auto;
+            padding: 4rem 3rem;
+            border: 1px solid #88888867;
+            width: 60%;
+            border-radius: 10px;
+            position: relative;
+    
+    
+        }
+    
+        .popup-dataset.active {
+            display: block;
+            opacity: 1;
+        }
+    
+        .popup-content span {
+            font-weight: 700;
+        }
+        
+        .close {
+            color: #ffffff;
+            float: right;
+            font-size: 4rem;
+            font-weight: bold;
+            position: absolute;
+            top: -10px;
+            right: 10px;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #8086ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    
+    /* Style for unselected labels */
+    .suggestions label {
+        display: inline-block;
+        font-size: 0.9rem;
+        padding: 1rem 2rem;
+        border-radius: 20px;
+        background: linear-gradient(-45deg, #2d3aad, #3b49ab);
+        color: white;
+        cursor: pointer;
+        margin: 5px;
+        transition: background 0.3s; /* Smooth transition for background color change */
+        font-weight: 700;
+        display: flex;
+        justify-content: start;
+        width: 80%;
+        margin: 0;
+        align-items: center;
+    }
+    
+    #ask_request {
+        display: none;
+        visibility: hidden;
+    }
+    
+    .request {
+        display: inline-block;
+        font-size: 0.9rem;
+        padding: 1rem 2rem;
+        border-radius: 20px;
+        background: linear-gradient(-45deg, #554b8f, #362680); /* Dull purple gradient for unselected */
+        color: white;
+        cursor: pointer;
+        margin: 5px;
+        transition: background 0.3s; /* Smooth transition for background color change */
+        font-weight: 700;
+        display: flex;
+        justify-content: start;
+        width: 80%;
+        margin: 0;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    /* Hides the default radio button */
+    .suggestions input[type="radio"] {
+        display: none;
+    }
+    
+    /* Style for selected label */
+    .suggestions input[type="radio"]:checked + label {
+        background: linear-gradient(-45deg, #8e3eb1, #6630b6); /* Vibrant purple gradient for selected */
+    }
+    
+    .suggestions i {
+        margin-right: 0.5rem;
+    }
+    
+    
+    #download_link, #download_link_dataset {
+        padding: 0.8rem 2.5rem;
+            font-family: 'Raleway';
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(-45deg, #702994, #b65ee5);
+            margin-top: 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s ease-in-out;
+            font-weight: 700;
+            font-size: 1rem;
+            width: 12rem;
+            text-align: center;
+    }
+    
+    #response1 {
+        flex-direction: column;
+    }
+    
+    #download_link:hover, #download_link_dataset:hover {
+        background: linear-gradient(-45deg, #9a45c5, #c473f0);
+    
+    }
+    </style>
+  </head>
+  <body>
+    <a class="log-out" href="#popup_close"><i class="fa-solid fa-right-from-bracket"></i> Exit Analysis</a>
+
+
+    <div id="popup" class="popup-dataset">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <div id="datasetInfo"></div>
+        </div>
+    </div>
+
+    <div id="popup1" class="popup-dataset">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup1()">&times;</span>
+            <div id="datasetInfo1"></div>
+        </div>
+    </div>
+    
+
+    
+    <div class="output-container">
+
+        <div class="mini-container">
+            <div class="output-header " data-aos="fade-up">
+                <h1>Your Playlist Analysis is ready!</h1>
+                <p>Our playlist analysis will give you an overview over the playlist, what does influence its performance, and a closer look on its top and worst performing videos...</p>
+            </div>
+        </div>
+        
+        <div class="mini-container">
+            <h2 data-aos="fade-up">Download your results:</h2>
+            <div class="downlaodables" data-aos="fade-up">
+            <div class="download-dataset download-el">
+                <i class="fa-solid fa-table"></i>
+                <div class="download-text">
+                    <div class="text">
+                        <h3>The playlist datasets</h3>
+                    <p>A dataset for the playlist info, and a dataset for each video on the playlist.</p>
+                    </div>
+                    
+                    <div class="button">
+                        <button id="download-dataset-button">Download the dataset</button>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="download-report download-el">
+                <i class="fa-solid fa-file-contract"></i>
+                <div class="download-text ">
+                    <div class="text">
+                        <h3>Analysis report</h3>
+                        <p>including all the graphs, statistics, and interpretaions presented.</p>
+                    </div>
+                    
+                    <div class="button">
+                        <a href="{% url 'download_docx' filename=docx_file %}"><button>Download the report</button></a>
+                    </div>
+                    
+                </div>
+            </div>
+            </div>
+
+        </div>
+
+        <div class="mini-container stats-graphs-container">
+            <div class="stats-graphs" data-aos="fade-up">
+                <h1>Get An Overview</h1>
+                <p>take a look over playlist in general, what is it about and how is it performing</p>
+                <div class="overview">
+                    <div class="header">
+                        
+                        <div class="header-info">
+                            <img src='{{thumbnail}}' alt="">
+                            <h1>{{title}}</h1>
+                              
+                        </div>
+                        {% if description != ''%}
+                        <div class="desc">
+                            <h3>Playlist description</h3>
+                        <p>{{description}}</p>
+                        </div>
+                        {%endif%}
+                    </div>
+                    <div class="playlist-wordtags">
+                        <h1>Playlist Word tags</h1>
+                        <div id="wordcloud0" class="wordcloud"></div>
+
+                    </div>
+                        <h1 class="playlist-stats-h1">Playlist statistics</h1>
+                        <div class="video-stats">
+                            <div class="video-stat">
+                                <h3 >{{playlist_publishedAt}}</h3>
+                                <p>publishedAt</p>
+                            </div>
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{videoCount}}">1000</h3>
+                                <p>videos</p>
+                            </div>
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{totalViews}}">1000</h3>
+                                <p>total Views</p>
+                            </div>
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{totalLikes}}">1000</h3>
+                                <p>total Likes</p>
+                            </div>
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{totalComments}}">0</h3>
+                                <p>total Comments</p>
+                            </div>
+                            <div class="video-stat">
+                                <h3 class="number" data-target="{{average_duration}}">0</h3>
+                                <p>average video duration</p>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mini-container stats-graphs-container">
+            <div class="stats-graphs" data-aos="fade-up">
+                <h1>Get a deeper understanding</h1>
+                <div class="overview">
+                    <div class="owl-carousel">
+                        <div class="item">
+                            <div class="chart-compare ">
+                                <div class="compare-el">
+                                    <div class="compare-stats">
+                                        <p>Playlist Videos<br><span>Views</span> <br>over puplication time</p>
+                        
+                                    </div>
+                                    <div id="views-chart"></div>
+
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="chart-compare ">
+                                <div class="compare-el">
+                                    <div class="compare-stats">
+                                        <p>Playlist Videos<br><span>Likes</span> <br>over puplication time</p>
+                        
+                                    </div>
+                                    <div id="likes-chart"></div>
+
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="chart-compare ">
+                                <div class="compare-el">
+                                    <div class="compare-stats">
+                                        <p>Playlist Videos<br><span>Comments</span> <br>over puplication time</p>
+                        
+                                    </div>
+                                    <div id="comment-chart"></div>
+
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                    
+                    <div class="owl-carousel">
+                        <div class="item">
+                            <div class="chart-compare ">
+                                <div class="compare-el">
+                                    <div class="compare-stats">
+                                        <p>How does <br><span>Duration</span> <br> affect the Videos <span>Views</span>?</p>
+                        
+                                    </div>
+                                    <div id="views-chart-dur"></div>
+
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="chart-compare ">
+                                <div class="compare-el">
+                                    <div class="compare-stats">
+                                        <p>How does <br><span>Duration</span> <br> affect the Videos <span>Likes</span>?</p>
+                        
+                                    </div>
+                                    <div id="likes-chart-dur"></div>
+
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="chart-compare ">
+                                <div class="compare-el">
+                                    <div class="compare-stats">
+                                        <p>How does <br><span>Duration</span> <br> affect the Videos <span>Comments</span>?</p>
+                        
+                                    </div>
+                                    <div id="comment-chart-dur"></div>
+
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="top-videos" data-aos="fade-up">
+            <h1 data-aos="fade-up">Look closer</h1>
+            <p data-aos="fade-up">observe the top and worst performing videos on the playlist to have a closer look on the people opinions and engagement with the content</p>
+            <div class="videos" >
+                <div class="mini-container"  data-aos="fade-up">
+                    <h1 data-aos="fade-up" style="margin-bottom: 4rem;">Top performing videos</h1>
+                    {% for video in top_5_videos%}
+                        <div class="video" data-aos="fade-up">
+                            <div class="video-header" >
+                                <img src="{{video.thumbnail}}" alt="">
+                                <h3>{{video.title}}</h3>
+                                <div class="video-stats">
+                                    <div class="video-stat">
+                                        <p>{{video.viewsCount}}</p>
+                                        <p>views</p>
+                                    </div>
+                                    <div class="video-stat">
+                                        <p>{{video.duration}}</p>
+                                        <p>minutes</p>
+                                    </div>
+                                    <div class="video-stat">
+                                        <p>{{video.publishedAt}}</p>
+                                        <p>publishedAt</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    {%if top_5_comments%}
+                    <div class="emotions_radchart" style="margin-bottom: 5rem; margin-top: 5rem;">
+                        <h1 data-aos="fade-up">Commetns emotions distribution</h1>
+                    <p data-aos="fade-up">Get a deeper understanding of why the viewers likes this content through comments sentiment analysis</p>
+                    <div id="emotions_radchart" data-aos="fade-up"></div>
+                    </div>
+                    {%endif%}
+                    
+                    {%if top_5_comments%}
+
+                    <div class="emotions-examples">
+                        <h1 data-aos="fade-up">Look into the top emotions</h1>
+                        <p data-aos="fade-up">the top comments from the top emotions</p>
+                        <div class="examples">
+                            {% for emotion, comment in top_5_comments.items %}
+                            <div class="example" data-aos="fade-up">
+                                <div class="emotion"><h3>{{ emotion }}</h3></div>
+                                <div class="ex">
+                                    <p class="truncated">{{ comment|truncatechars:150 }}</p>
+                                    <p class="full-comment">{{ comment }}</p>
+                                </div>
+                            </div>
+                            {%endfor%}
+                        </div>
+                        
+                        {%endif%}
+                    </div>
+                    
+                </div>
+                
+                
+            </div>
+
+            <div class="videos" >
+                <div class="mini-container"  data-aos="fade-up">
+                    <h1 data-aos="fade-up" style="margin-bottom: 4rem;">Worst performing videos</h1>
+                    {% for video in worst_5_videos%}
+                        <div class="video" data-aos="fade-up">
+                            <div class="video-header" >
+                                <img src="{{video.thumbnail}}" alt="">
+                                <h3>{{video.title}}</h3>
+                                <div class="video-stats">
+                                    <div class="video-stat">
+                                        <p>{{video.viewsCount}}</p>
+                                        <p>views</p>
+                                    </div>
+                                    <div class="video-stat">
+                                        <p>{{video.duration}}</p>
+                                        <p>minutes</p>
+                                    </div>
+                                    <div class="video-stat">
+                                        <p>{{video.publishedAt}}</p>
+                                        <p>publishedAt</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% if worst_5_comments %}
+                    <div class="emotions_radchart" style="margin-bottom: 5rem; margin-top: 5rem;">
+                        <h1 data-aos="fade-up">Commetns emotions distribution</h1>
+                    <p data-aos="fade-up">Get a deeper understanding of why the viewers likes this content through comments sentiment analysis</p>
+                    <div id="emotions_radchart_worst" data-aos="fade-up"></div>
+                    </div>
+                    {%endif%}
+                    
+                    {% if worst_5_comments%}
+                    <div class="emotions-examples">
+                        <h1 data-aos="fade-up">Look into the top emotions</h1>
+                        <p data-aos="fade-up">the top comments from the top emotions</p>
+                        <div class="examples">
+                            {% for emotion, comment in worst_5_comments.items %}
+                            <div class="example" data-aos="fade-up">
+                                <div class="emotion"><h3>{{ emotion }}</h3></div>
+                                <div class="ex">
+                                    <p class="truncated">{{ comment|truncatechars:150 }}</p>
+                                    <p class="full-comment">{{ comment }}</p>
+                                </div>
+                            </div>
+                            {%endfor%}
+                        </div>
+                        
+                        {%endif%}
+                    
+                </div>
+                
+                
+            </div>
+            
+            </div>
+        </div>
+
+       
+
+        <div class="mini-container" id="section6">
+            <div class="ask-Ai">
+                <div id="step1" class="ask-ai-intro">
+                    <h2>Chat With Datasets Using AI</h2>
+                    <button onclick="nextStep()"><i class="fa-solid fa-play"></i></button>
+                </div>
+                
+                <div id="step2" style="display: none;" class="explanation-container">
+                    <div class="explanation">
+                        <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                        <span>Chat With Datasets</span> is like having a super-smart buddy who helps you unravel the mysteries hidden in your data! Want to know how many videos popped up in February? Or maybe you're just curious about what a channel or playlist is all about? No worries! Our chatbot is here to make diving into your data a breeze. So go ahead, ask away, and let's uncover some awesome insights together!
+                    </div>
+                    <div class="datasets">
+                        <h2>Learn more about your Datasets!</h2>
+                        <p>Tap on the datasets listed below to uncover detailed description of their fields and to get inspired by suggestions for questions you can explore with:
+                        </p>
+                        <div class="datasets-info">
+                            <div class="dataset" onclick="showDatasetInfo('ChannelVideos')">
+                                <i class="fa-solid fa-table"></i>
+                                <p>Channel Videos Dataset</p>
+                            </div>
+                            <div class="dataset" onclick="showDatasetInfo('ChannelPlaylists')">
+                                <i class="fa-solid fa-table"></i>
+                                <p>Channel Playlists Dataset</p>
+                            </div>
+                            <div class="dataset" onclick="showDatasetInfo('ChannelInfo')">
+                                <i class="fa-solid fa-table"></i>
+                                <p>Channel Info Dataset</p>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                    </div>
+                    <button onclick="nextStep()">Got it? Start Now!   <i class="fa-solid fa-forward"></i></button>
+                </div>
+                
+                
+                
+                <div id="step3" style="display: none;">
+                    
+                    <div class="ask-Ai">
+                        <div class="col">
+                            <h2 data-aos="fade-up">Chat With Datasets Using AI</h2>
+                            <div class="datasets smaller-datasets" style="width: 100%; display:flex; flex-direction:row; justify-content:center; align-items:center;">
+                                <div class="datasets-info" style="display:flex;width: 100%; flex-direction:row; justify-content:space-between; align-items:center;" >
+                                    <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
+                                        <i class="fa-solid fa-table"></i>
+                                        <p>Channel Videos Dataset</p>
+                                    </div>
+                                    <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
+                                        <i class="fa-solid fa-table"></i>
+                                        <p>Channel Playlists Dataset</p>
+                                    </div>
+                                    <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
+                                        <i class="fa-solid fa-table"></i>
+                                        <p>Channel Info Dataset</p>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                            </div>
+                            <div class="suggestions">
+                                <h3 data-aos="fade-up">What are the common topics in the channel?</h3>
+                                <h3 data-aos="fade-up">What are the most viewed videos and their characteristics?</h3>
+                                <h3 data-aos="fade-up">What are the common categories in the channel?</h3>
+                            </div>
+                            <div class="chat" data-aos="fade-up">
+                            <textarea id="messageInput" type="text" placeholder="Enter your question here"></textarea>
+                            <br>
+                            <button onclick="sendMessage()">Send</button>
+                            
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h3 data-aos="fade-up">Answer</h3>
+                            
+                            <div class="answer" data-aos="fade-up">
+                                <div id='ask_request' class="request">
+                                    
+                                </div>
+                                <div id="loading-spinner" class="loading-spinner floating">
+                                    <!-- Your spinner or loading message here -->
+                                    <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                                    <h2>Waiting for the Assistant to process...</h2>
+                                </div>
+                                <div id="response">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+               
+                
+                
+                
+            </div>
+            
+
+        </div>
+
+        <div class="mini-container" id="section7">
+
+            <div class="ask-Ai">
+                <div id="step_graphs1" class="ask-ai-intro graphs_background">
+                    <h2>Generate Graphs With AI</h2>
+                    <button onclick="nextStepGraphs()"><i class="fa-solid fa-play"></i></button>
+                </div>
+                
+                <div id="step_graphs2" style="display: none;" class="explanation-container">
+                    <div class="explanation">
+                        <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                        <span>Generate Graphs With AI</span> allows you to step into the fun world of data visualization with us. Pick a dataset you like and imagine any chart you want to bring to life. Want to add a personal touch? Feel free to play with font sizes, pick your favorite colors for the graph, and choose a font style that really represents your vibe. We're here to make exploring data easy and enjoyable for everyone. So, let's start crafting your perfect chart together!
+                    </div>
+                    <div class="datasets">
+                        <h2>Learn more about your Datasets!</h2>
+                        <p>Tap on the datasets listed below to uncover detailed description of their fields and to get inspired by suggestions for questions you can explore with:</p>
+                        <div class="datasets-info">
+                            <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
+                                <i class="fa-solid fa-table"></i>
+                                <p>Channel Videos Dataset</p>
+                            </div>
+                            <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
+                                <i class="fa-solid fa-table"></i>
+                                <p>Channel Playlists Dataset</p>
+                            </div>
+                            <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
+                                <i class="fa-solid fa-table"></i>
+                                <p>Channel Info Dataset</p>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                    </div>
+                    <button onclick="nextStepGraphs()">Got it? Start Now!   <i class="fa-solid fa-forward"></i></button>
+                </div>
+                
+                
+                
+                <div id="step_graphs3" style="display: none; ">
+                    
+                    <div class="ask-Ai" style="display:flex; flex-direction: column; justify-content:center; align-items:center; width:100%; height:100%;">
+                        <div class="col" style="display:flex; flex-direction: row; width: 100%; margin:0; justify-content:center; align-items:start;">
+                            <h2 data-aos="fade-up" style="width: 25%; margin-right:0rem;">Generate Graphs with AI</h2>
+                            <div class="suggestions" style="margin-right: 3rem;">
+                                <input type="radio" id="channelVideosDataset1" name="dataset1" value="all_videos_csv" data-aos="fade-up" checked>
+                                <label for="channelVideosDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Videos Dataset</label><br>
+                                <input type="radio" id="channelPlaylistsDataset1" name="dataset1" value="all_playlists_csv" data-aos="fade-up">
+                                <label for="channelPlaylistsDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Playlists Dataset</label><br>
+                                <input type="radio" id="channelInfoDataset1" name="dataset1" value="channel_df_csv" data-aos="fade-up">
+                                <label for="channelInfoDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Info Dataset</label>
+                            </div>
+                            <div class="chat" data-aos="fade-up" style="margin-top: 0; ">
+                            <textarea id="messageInput1" type="text" placeholder="Enter your request here" style="margin-top: 0; width:20rem; margin-left: 0; height:5rem"></textarea>
+                            <br>
+                            <button onclick="sendMessageGraphs()">Create Graph</button>
+                            
+                            </div>
+                        </div>
+                        <div class="col"style="width: 100%; display:flex; flex-direction:row; margin-top:3rem;  align-items:center;" >
+                            <h3 style="margin:0; margin-right: 3rem; font-size:1rem; margin-bottom:2rem;">Recheck your <br>datasets <br> Information:</h3>
+                            <div class="datasets smaller-datasets" style="width: 40%; display:flex; flex-direction:row; justify-content:center; align-items:center;">
+                                <div class="datasets-info" style="display:flex;width: 100%; flex-direction:row; justify-content:space-between; align-items:center;" >
+                                    <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
+                                        <i class="fa-solid fa-table"></i>
+                                        <p>Channel Videos Dataset</p>
+                                    </div>
+                                    <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
+                                        <i class="fa-solid fa-table"></i>
+                                        <p>Channel Playlists Dataset</p>
+                                    </div>
+                                    <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
+                                        <i class="fa-solid fa-table"></i>
+                                        <p>Channel Info Dataset</p>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col" style="width: 100%">
+                            <h3 data-aos="fade-up">Output</h3>
+                            
+                            <div class="answer answer_output" data-aos="fade-up" style="height: 48rem; max-height:48rem;">
+                                <div id="loading-spinner1" class="loading-spinner floating">
+                                    <!-- Your spinner or loading message here -->
+                                    <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                                    <h2>Waiting for the Generator to process...</h2>
+                                </div>
+                                <div id="response1">
+                                    <div id='graph_request' class="request">
+                                    
+                                    </div>
+                                    
+                                    <img id="base64Image" src="" alt="Image from Base64" style="max-width: 100%; margin:0;" />
+                                    <a id="download_link" ><i class="fa-solid fa-download"></i> Download Image</a>
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+
+        <div class="mini-container " id="section8">
+            <div class="schedule-container">
+                <h1>Do you want to shedule your results?</h1>
+                <p>You can schedule the analysis to be recived at a certain times hourly, daily, or even monthly!</p>
+                <a href="{% url 'schedule_channel_analysis_form' %}"><button>Schedule my Analysis Now</button></a>
+    
+            </div>
+           
+        </div>
+
+
+        
+        
+
+       
+
+
+
+
+    </div>
+
+    <div id="popup_close" class="overlay">
+        <div class="popup">
+            <h2>Do you want to save your results?</h2>
+            <div class="text">
+                If you choose to save, you will be able to access the content later.
+                <div class="popup-buttons">
+                    <button class="yes" onclick="saveResults()">Yes, save them</button>
+                    <a href="{% url 'base' %}"><button>Don't save, just exit</button></a>
+                </div>   
+            </div>
+        </div>
+    </div>
+
+   
+
+
+<script type="text/javascript">
+    const csrftoken = '{{ csrf_token }}';
+</script>
+
+<script>
+    function saveResults() {
+        fetch("{% url 'save_results_playlist_analysis' %}", {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({save: true}) // You can include additional data if needed
+        }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+                window.location.href = "{% url 'base' %}"; // Redirect or inform the user
+            } else {
+                alert("Failed to save results.");
+            }
+        });
+    }
+    </script>
+<script>
+    function showDatasetInfo(datasetName) {
+        var datasetInfo = getDatasetInfo(datasetName);
+        document.getElementById("datasetInfo").innerHTML = datasetInfo;
+        document.getElementById("popup").classList.add("active");
+    }
+    
+    function closePopup() {
+        document.getElementById("popup").classList.remove("active");
+    }
+    
+    
+    function showDatasetInfo1(datasetName) {
+        var datasetInfo = getDatasetInfo(datasetName);
+        document.getElementById("datasetInfo1").innerHTML = datasetInfo;
+        document.getElementById("popup1").classList.add("active");
+    }
+    
+    function closePopup1() {
+        document.getElementById("popup1").classList.remove("active");
+    }
+    
+    
+    function getDatasetInfo(datasetName) {
+        var info = "";
+        switch (datasetName) {
+            case "ChannelVideos":
+                info = "This dataset contains information about channel videos, including unique identifiers (videoId), <span/>titles, descriptions, publication dates (publishedAt), thumbnail URLs, view counts (viewsCount), like counts (likesCount), comment counts (commentCount), duration, unique tags (unique_tags), category IDs (categoryId), and the most used categories (most_used_categories)</span>.<br><br>" +
+                "<span>Questions you might ask include:</span><br>" +
+                "- What are the top 5 most viewed videos on the channel?<br>" +
+                "- Which video has the highest number of likes?<br>" +
+                "- How many videos were published in the last month?<br>" +
+                "- What are the common tags used in the channel's videos?";
+                break;
+            case "ChannelPlaylists":
+                info = "This dataset contains information about <span>channel playlists, including unique identifiers (playlistId), titles, descriptions, thumbnail URLs, publication dates (publishedAt), and the number of videos in each playlist (videoCount)</span>.<br><br>" +
+                "<span>Questions you might ask include:</span><br>" +
+                "- Which playlist has the most videos?<br>" +
+                "- How many playlists were created in the last year?<br>" +
+                "- What are the titles of all playlists containing more than 10 videos?";
+                break;
+            case "ChannelInfo":
+                info = "This dataset contains general information about the channel, such as <span>the channel name, description, thumbnail URL, total view count (viewCount), total number of videos (videoCount), subscriber count, creation date (publishedAt), most used video categories (mostUsedCategories), total likes count (likesCount), total comments count (commentCount), average video duration (average_duration), unique tags (uniqueTags), and the number of playlists created (PlaylistCount)</span>.<br><br>" +
+                "<span>Questions you might ask include:</span><br>" +
+                "- How has the average video duration changed over time?<br>" +
+                "- What is the growth rate of subscribers in the last year?<br>" +
+                "- Which categories does the channel focus on the most?<br>" +
+                "- What are the common themes or tags in the channel's content?";
+                break;
+        }
+        return info;
+    }
+    
+    
+</script>
+
+<script>
+    function deepCopy(obj, visited = new WeakMap()) {
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+        if (visited.has(obj)) {
+            return visited.get(obj);
+        }
+        let copy;
+        if (Array.isArray(obj)) {
+            copy = [];
+            visited.set(obj, copy);
+            obj.forEach((item, index) => {
+                copy[index] = deepCopy(item, visited);
+            });
+            return copy;
+        }
+        if (obj instanceof Object) {
+            copy = {};
+            visited.set(obj, copy);
+            Object.keys(obj).forEach(key => {
+                // Skip properties that cause circular references
+                if (key !== 'ctx') {
+                    copy[key] = deepCopy(obj[key], visited);
+                }
+            });
+            return copy;
+        }
+        throw new Error('Unable to copy object!');
+    }
+</script>
+
+<script>
+    function downloadPDF() {
+        var container = document.querySelector('.stats-graphs-container');
+
+    html2canvas(container, { scale: 2 }).then(function(canvas) {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({
+            orientation: 'landscape', // Change according to the layout of your content
+            unit: 'pt',
+            format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save("stats-graphs-report.pdf");
+    });
+    }
+</script>
+
+<script>
+   
+    document.addEventListener('DOMContentLoaded', function() {
+        var videoContainers = document.querySelectorAll('.video-container');
+    
+        // Function to remove expanded class from all video containers
+        function resetContainers() {
+            videoContainers.forEach(function(container) {
+                container.classList.remove('expanded');
+                container.style.boxShadow = '';
+                container.style.display = ''; // Show all containers
+            });
+        }
+    
+        // Add or remove expanded class on hover
+        videoContainers.forEach(function(container) {
+            container.addEventListener('mouseenter', function() {
+                container.classList.add('expanded');
+                // Hide other containers
+                videoContainers.forEach(function(otherContainer) {
+                    if (otherContainer !== container) {
+                        otherContainer.style.display = 'none';
+                    }
+                });
+            });
+            container.addEventListener('mouseleave', function() {
+                if (!container.classList.contains('clicked')) {
+                    container.classList.remove('expanded');
+                    container.style.boxShadow = '0 0 30px 10px #6b4e8f76'; // Change box shadow
+                    resetContainers();
+                }
+            });
+        });
+    
+        // Remove expanded class and reset on click outside
+        document.addEventListener('click', function(event) {
+            var isClickInsideContainer = Array.from(videoContainers).some(function(container) {
+                return container.contains(event.target);
+            });
+    
+            if (!isClickInsideContainer) {
+                resetContainers();
+            } else {
+                videoContainers.forEach(function(container) {
+                    if (container.contains(event.target)) {
+                        container.classList.add('clicked');
+                    } else {
+                        container.classList.remove('clicked');
+                    }
+                });
+            }
+        });
+    });
+    
+        
+</script>
+<script>
+    document.getElementById('download-dataset-button').addEventListener('click', function() {
+        window.location.href = "{% url 'playlist_dataset_zipped_output' %}";
+    });
+</script>
+<script id="json-data" type="application/json">{{ json_data|safe }}</script>
+
+<script>
+
+    var jsonData = JSON.parse(document.getElementById('json-data').textContent);
+
+    var videos_publishedAt = jsonData.videos_publishedAt
+    var videos_duration = jsonData.videos_duration
+
+
+    var videos_likes = jsonData.videos_likes.reverse()
+    var videos_views = jsonData.videos_views.reverse()
+    var videos_commentCount = jsonData.videos_commentCount.reverse()
+
+    var seriesData = videos_publishedAt.map(function(date, index) {
+        return {
+            x: new Date(date).getTime(), // Convert to timestamp
+            y: videos_views[index]
+        };
+    });
+
+    var seriesDataLikes = videos_publishedAt.map(function(date, index) {
+        return {
+            x: new Date(date).getTime(), // Convert to timestamp
+            y: videos_likes[index]
+        };
+    });
+
+
+    var seriesDataComments = videos_publishedAt.map(function(date, index) {
+        return {
+            x: new Date(date).getTime(), // Convert to timestamp
+            y: videos_commentCount[index]
+        };
+    });
+
+    var seriesDataDur = videos_duration.map(function(time, index) {
+        return {
+            x: time, // Convert to timestamp
+            y: videos_views[index]
+        };
+    });
+
+    var seriesDataLikesDur = videos_duration.map(function(time, index) {
+        return {
+            x: time, // Convert to timestamp
+            y: videos_likes[index]
+        };
+    });
+
+
+    var seriesDataCommentsDur = videos_duration.map(function(time, index) {
+        return {
+            x: time, // Convert to timestamp
+            y: videos_commentCount[index]
+        };
+    });
+
+
+
+    console.log(videos_publishedAt)
+    console.log(videos_views)
+    var options1 = {
+        chart: {
+            id: "chart2",
+            type: "bar",
+            height: 300,
+            width: 500,
+            foreColor: "#ccc",
+            toolbar: {
+                show: true, // Show the toolbar
+                tools: {
+                    download: true, // Enable the download tool
+                    selection: false,
+                zoom: false,
+                zoomin: false,
+                zoomout: false,
+                pan: false,
+                reset: false
+                }        },
+        },
+       
+        colors: ["#00BAEC"],
+        stroke: {
+            width: 3,
+            curve: 'smooth'
+        },
+        grid: {
+            borderColor: "#555",
+            clipMarkers: false,
+            yaxis: {
+            lines: {
+                show: false
+            }
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        fill: {
+            gradient: {
+            enabled: true,
+            opacityFrom: 0.9,
+            opacityTo: 0.3
+            }
+        },
+        
+        series: [
+            {
+                name: "views",
+            data: seriesData
+            }
+        ],
+        tooltip: {
+            theme: "dark",
+            x: {
+                format: "dd MMM yyyy" // Format: 01 Jan 2023
+            }
+        },
+        xaxis: {
+            type: "datetime",
+            labels: {
+                formatter: function(value, timestamp) {
+                    return new Date(timestamp).getFullYear();
+                }}
+        },
+        
+        yaxis: {
+            min: 0,
+            tickAmount: 4
+        },
+        grid: {
+            show: true
+        }
+        };
+
+        var chart1 = new ApexCharts(document.querySelector("#views-chart"), options1);
+
+        const options2 = options1
+        options2.series = [{name: "likes", data: seriesDataLikes}]
+        var chart2 = new ApexCharts(document.querySelector("#likes-chart"), options2);
+
+        const options3 = options1
+        options3.series = [{name: "comment count", data: seriesDataComments}]
+        var chart3 = new ApexCharts(document.querySelector("#comment-chart"), options3);
+
+        chart1.render();
+
+        var chart1Options = chart1.w.config;
+
+        var views_chart = deepCopy(chart1Options);
+        views_chart.chart.foreColor = '#000'; // Set text color to black
+        views_chart.chart.background = '#FFF'; // Set background to white for contrast
+        views_chart.chart.height = 300; // Set text color to black
+        views_chart.chart.width = 300; // Set background to white for contrast
+        views_chart.title.text = "Published At against views";
+        views_chart.legend.show = true
+        views_chart.fill = {}
+
+        chart2.render();
+
+        var chart2Options = chart2.w.config;
+
+        var likes_chart = deepCopy(chart2Options);
+        likes_chart.chart.foreColor = '#000'; // Set text color to black
+        likes_chart.chart.background = '#FFF'; // Set background to white for contrast
+        likes_chart.chart.height = 300; // Set text color to black
+        likes_chart.chart.width = 300; // Set background to white for contrast
+        likes_chart.title.text = "Published At against likes";
+        likes_chart.legend.show = true
+        likes_chart.fill = {}
+
+        chart3.render();
+
+        var chart3Options = chart3.w.config;
+
+        var comments_chart = deepCopy(chart3Options);
+        comments_chart.chart.foreColor = '#000'; // Set text color to black
+        comments_chart.chart.background = '#FFF'; // Set background to white for contrast
+        comments_chart.chart.height = 300; // Set text color to black
+        comments_chart.chart.width = 300; // Set background to white for contrast
+        comments_chart.title.text = "Published At against comments count";
+        comments_chart.legend.show = true
+        comments_chart.fill = {}
+
+        var options4 = {
+            chart: {
+                id: "chart2",
+                type: "bar",
+                height: 300,
+                width: 500,
+                foreColor: "#ccc",
+                toolbar: {
+                    show: true, // Show the toolbar
+                    tools: {
+                        download: true, // Enable the download tool
+                        selection: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
+                    pan: false,
+                    reset: false
+                    }        },
+            },
+
+            plotOptions: {
+                bar: {
+                    columnWidth: '50%',
+                    borderRadius: [4, 4, 0, 0],
+                    // other bar options
+                }
+            },
+           
+            colors: ["#00BAEC"],
+            stroke: {
+                curve: 'smooth'
+            },
+            grid: {
+                borderColor: "#555",
+                clipMarkers: false,
+                yaxis: {
+                lines: {
+                    show: false
+                }
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            fill: {
+                gradient: {
+                enabled: true,
+                opacityFrom: 0.9,
+                opacityTo: 0.3
+                }
+            },
+            
+            series: [
+                {
+                    name: "views",
+                data: seriesDataDur
+                }
+            ],
+            tooltip: {
+                theme: "dark",
+            
+            },
+            xaxis: {            
+            },
+            
+            yaxis: {
+                min: 0,
+                tickAmount: 4
+            },
+            grid: {
+                show: true
+            }
+            };
+
+        options4.series = [{name: "views", data: seriesDataDur}]
+        var chart4 = new ApexCharts(document.querySelector("#views-chart-dur"), options4);
+
+        const options5 = options4
+        options5.series = [{name: "likes", data: seriesDataLikesDur}]
+        var chart5 = new ApexCharts(document.querySelector("#likes-chart-dur"), options5);
+
+        const options6 = options4
+        options6.series = [{name: "comment count", data: seriesDataCommentsDur}]
+        var chart6 = new ApexCharts(document.querySelector("#comment-chart-dur"), options6);
+
+        chart4.render();
+
+        var chart4Options = chart4.w.config;
+
+        var views_chart_dur = deepCopy(chart4Options);
+        views_chart_dur.chart.foreColor = '#000'; // Set text color to black
+        views_chart_dur.chart.background = '#FFF'; // Set background to white for contrast
+        views_chart_dur.chart.height = 300; // Set text color to black
+        views_chart_dur.chart.width = 300; // Set background to white for contrast
+        views_chart_dur.title.text = "Duration against views count";
+        views_chart_dur.legend.show = true
+        views_chart_dur.fill = {}
+
+        chart5.render();
+
+        var chart5Options = chart5.w.config;
+
+        var likes_chart_dur = deepCopy(chart5Options);
+        likes_chart_dur.chart.foreColor = '#000'; // Set text color to black
+        likes_chart_dur.chart.background = '#FFF'; // Set background to white for contrast
+        likes_chart_dur.chart.height = 300; // Set text color to black
+        likes_chart_dur.chart.width = 300; // Set background to white for contrast
+        likes_chart_dur.title.text = "Duration against likes count";
+        likes_chart_dur.legend.show = true
+        likes_chart_dur.fill = {}
+
+
+        chart6.render();
+
+        var chart6Options = chart6.w.config;
+
+        var comments_chart_dur = deepCopy(chart6Options);
+        comments_chart_dur.chart.foreColor = '#000'; // Set text color to black
+        comments_chart_dur.chart.background = '#FFF'; // Set background to white for contrast
+        comments_chart_dur.chart.height = 300; // Set text color to black
+        comments_chart_dur.chart.width = 300; // Set background to white for contrast
+        comments_chart_dur.title.text = "Duration against comments count";
+        comments_chart_dur.legend.show = true
+        comments_chart_dur.fill = {}
+    
+    
+        setTimeout(() => {
+            chart1.updateOptions({
+            });
+            chart2.updateOptions({
+            });
+            chart3.updateOptions({
+            });
+            chart4.updateOptions({
+            });
+            chart5.updateOptions({
+            });
+            chart6.updateOptions({
+            });
+        }, 1000); // Adjust the timeout duration as needed
+    
+</script>
+
+<script>
+
+    // Define a function to draw a word cloud
+    var myColors = ['#D5A9FF', '#7EF7D9', '#12CEE6', '#4686FF', '#FFFFFF', /* more colors */ ];
+
+    function drawWordCloud(selector, words) {
+        // Create a function to generate random sizes for the words
+        var getRandomSize = function() {
+            return 10 + Math.random() * 30; // Random size between 10 and 50
+        };
+    
+        // Set up the word cloud layout
+        var layout = d3.layout.cloud()
+            .size([800, 300]) // The size of the word cloud
+            .words(words.map(function(d) {
+                return {text: d, size: getRandomSize()}; // Assign random size to each word
+            }))
+            .padding(2) // Adjust padding between words
+            .rotate(0) // Set rotation, if desired
+            .font("Raleway")
+            .fontSize(function(d) { return d.size; }) // Use the assigned size
+            .on("end", draw);
+    
+        layout.start();
+    
+        // Draw the word cloud
+        function draw(words) {
+            var svg = d3.select(selector).append("svg")
+                .attr("width", layout.size()[0])
+                .attr("height", layout.size()[1])
+                .append("g")
+                .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")");
+    
+            svg.selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) { return d.size + "px"; }) // Font size is set by the layout
+                .style("font-family", "Raleway")
+                .style("font-weight", "bold") // Set the font family
+                .style("fill", function(d, i) { return myColors[i % myColors.length]; }) // Set the color
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });
+        }
+    }
+    
+
+// Define your array of words for each channel
+//var channelsTags = jsonData.topTags
+var channelsTags = jsonData.uniqueTags
+drawWordCloud("#wordcloud0" , channelsTags);
+
+</script>
+
+<script>
+    // Assuming jsonData.top_5_comments_analysis_dist is already defined as shown above
+    var emotions_chart_worstOpt;
+    var emotions_chartOpt;
+
+    
+if ('top_5_comments_analysis_dist' in jsonData) {
+        var emotionData = jsonData.top_5_comments_analysis_dist;
+
+        const emotionDatasliced = Object.fromEntries(
+        Object.entries(emotionData).slice(0, 10)
+        );
+
+
+    var emotions = Object.keys(emotionDatasliced);
+    var emotionValues = Object.values(emotionDatasliced).map(value => Math.round(value * 100));  // Convert to percentages
+
+    var options = {
+        chart: {
+            type: 'bar',
+            height: 500,
+            width: '100%',
+            foreColor: '#fff',        
+            // white text for the dark theme,
+            background: 'transparent'
+
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                distributed: true, 
+                columnWidth: '50%', 
+                endingShape: 'rounded' ,
+                dataLabels: {
+                    position: 'top' // Ensuring data labels appear on top of the bars
+                }
+            }
+        },
+        
+        theme: {
+            mode: 'dark',
+            palette: 'palette1'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        series: [{
+            name: 'Emotion Percentage',
+            data: emotionValues
+        }],
+        xaxis: {
+            categories: emotions,
+            
+        },
+        grid: {
+            show: false
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shade: 'light',
+                type: "vertical",
+                shadeIntensity: 0.5,
+                gradientToColors: undefined, 
+                inverseColors: true,
+                opacityFrom: 0.85,
+                opacityTo: 0.85,
+                stops: [0, 100]
+            }
+        },
+        stroke: {
+        lineCap: 'round' // This gives a slight radius effect on the chart
+    }
+    };
+    
+
+    var emotions_chart = new ApexCharts(document.querySelector("#emotions_radchart"), options);
+    emotions_chart.render();
+
+    var chart9Options = emotions_chart.w.config;
+
+    var emotions_chartOpt = deepCopy(chart9Options);
+    emotions_chartOpt.chart.foreColor = '#000'; // Set text color to black
+    emotions_chartOpt.chart.background = '#FFF'; // Set background to white for contrast
+    emotions_chartOpt.chart.height = 300; // Set text color to black
+    emotions_chartOpt.chart.width = 300; // Set background to white for contrast
+    emotions_chartOpt.title.text = "Top videos Comments Sentiment";
+    emotions_chartOpt.legend.show = true
+    emotions_chartOpt.fill = {}
+}
+
+if ('worst_5_comments_analysis_dist' in jsonData) {
+
+    var emotionDataWorst = jsonData.worst_5_comments_analysis_dist;
+
+   
+    const emotionDataslicedWorst = Object.fromEntries(
+  Object.entries(emotionDataWorst).slice(0, 10)
+    );
+
+    var emotionsWorst = Object.keys(emotionDataslicedWorst);
+    var emotionValuesWorst = Object.values(emotionDataslicedWorst).map(value => Math.round(value * 100));  // Convert to percentages
+
+    var options = {
+        chart: {
+            type: 'bar',
+            height: 500,
+            width: '100%',
+            foreColor: '#fff',        
+            // white text for the dark theme,
+            background: 'transparent'
+
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                distributed: true, 
+                columnWidth: '50%', 
+                endingShape: 'rounded' ,
+                dataLabels: {
+                    position: 'top' // Ensuring data labels appear on top of the bars
+                }
+            }
+        },
+        
+        theme: {
+            mode: 'dark',
+            palette: 'palette1'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        series: [{
+            name: 'Emotion Percentage',
+            data: emotionValues
+        }],
+        xaxis: {
+            categories: emotions,
+            
+        },
+        grid: {
+            show: false
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shade: 'light',
+                type: "vertical",
+                shadeIntensity: 0.5,
+                gradientToColors: undefined, 
+                inverseColors: true,
+                opacityFrom: 0.85,
+                opacityTo: 0.85,
+                stops: [0, 100]
+            }
+        },
+        stroke: {
+        lineCap: 'round' // This gives a slight radius effect on the chart
+    }
+    };
+
+    var options_worst = options
+    options_worst['series'] = [{
+        name: 'Emotion Percentage',
+        data: emotionValuesWorst
+    }],
+
+    options_worst['xaxis'] = {
+        categories: emotionsWorst
+    }
+
+    var emotions_chart_worst = new ApexCharts(document.querySelector("#emotions_radchart_worst"), options_worst);
+    emotions_chart_worst.render();
+
+    var chart10Options = emotions_chart_worst.w.config;
+
+    var emotions_chart_worstOpt = deepCopy(chart10Options);
+    emotions_chart_worstOpt.chart.foreColor = '#000'; 
+    emotions_chart_worstOpt.chart.background = '#FFF'; 
+    emotions_chart_worstOpt.chart.height = 300; 
+    emotions_chart_worstOpt.chart.width = 300; 
+    emotions_chart_worstOpt.title.text = "Worst videos Comments Sentiment";
+    emotions_chart_worstOpt.legend.show = true
+    emotions_chart_worstOpt.fill = {}
+}
+
+
+</script>
+
+<script>
+    function animateNumber(element, start, end, duration) {
+        let startTime = null;
+    
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min((timeElapsed / duration), 1); // Ensure progress doesn't exceed 1
+    
+            element.textContent = Math.floor(progress * (end - start) + start);
+    
+            if (timeElapsed < duration) {
+                requestAnimationFrame(animation);
+            }
+        }
+    
+        requestAnimationFrame(animation);
+    }
+    
+    const numberElements = document.querySelectorAll('.number');
+    
+    numberElements.forEach(numberElement => {
+        const targetValue = parseInt(numberElement.getAttribute('data-target'), 10);
+        animateNumber(numberElement, 0, targetValue, 4000); // 2000ms = 2 seconds for animation
+    });
+    
+</script>
+
+
+<script>$(document).ready(function(){
+    $(".owl-carousel").owlCarousel({
+        // Owl Carousel options
+        items: 1,
+        center: true,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        nav: true
+        // other options as needed
+    });
+});
+</script>
+
+    <script>
+        AOS.init({
+          duration: 1200, // You can adjust this value for animation duration
+        });
+      </script>
+
+      <script>
+        // Function to handle the rendering and conversion of a single chart to a data URI
+    // Function to handle the rendering and conversion of a single chart to a data URI
+    function convertChartToDataURI(chartOptions, callback) {
+        console.log('hi');
+        let exportContainer = document.createElement('div');
+        exportContainer.style.position = 'absolute';
+        exportContainer.style.left = '-9999px';
+        exportContainer.style.top = '-9999px';
+        document.body.appendChild(exportContainer);
+    
+        let modifiedChartOptions = {
+            ...chartOptions,
+            chart: {
+                ...chartOptions.chart,
+                events: {
+                    rendered: function(chartContext, config) {
+                        console.log('rendered');
+                    }
+                }
+            }
+        };
+    
+        let exportChart = new ApexCharts(exportContainer, modifiedChartOptions);
+        exportChart.render();
+    
+        // Manually trigger the rendered event for testing
+        setTimeout(() => {
+            exportChart.dataURI().then(({ imgURI }) => {
+                console.log('Manual trigger');
+                exportChart.destroy();
+                document.body.removeChild(exportContainer);
+                callback(null, imgURI);
+            });
+        }, 1000); // Adjust this delay as needed
+    }
+    
+    
+    
+    // Function to process all charts and send them to the server
+    function processAndSendCharts(chartsOptions) {
+        let chartImagesPromises = chartsOptions.map((options) => {
+            return new Promise((resolve, reject) => {
+                convertChartToDataURI(options, (error, imgURI) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(imgURI);
+                    }
+                });
+            });
+        });
+    
+        Promise.all(chartImagesPromises).then((imagesURI) => {
+            // Now you have all the images URI, send them to the server
+            fetch('/doc_playlist/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ imgData: imagesURI })
+            }).then(response => response.json())
+            .then(data => {
+                console.log(data); // Handle any response from the server
+            }).catch(error => {
+                console.error('Error sending charts to the server:', error);
+            });
+        }).catch(error => {
+            console.error('Error converting charts to images:', error);
+        });
+    }
+    
+    // Assuming you have an array of chart options for each chart
+    let chartsOptions = [views_chart, likes_chart, comments_chart, views_chart_dur, likes_chart_dur, comments_chart_dur];
+    if(emotions_chartOpt !== undefined) {
+        chartsOptions.push(emotions_chartOpt)
+    }
+
+    if(emotions_chart_worstOpt !== undefined) {
+        chartsOptions.push(emotions_chart_worstOpt)
+    }
+    // Process and send all charts
+    processAndSendCharts(chartsOptions);
+    
+    </script>
+
+    <script>
+        const ws = new WebSocket('ws://' + window.location.host + '/ws/echo/');
+        
+        ws.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.getElementById('response').innerText = data.message;
+            document.getElementById('loading-spinner').style.visibility = 'hidden';
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('response').style.visibility = 'visible';
+            document.getElementById('response').style.display = 'block';
+            document.getElementById('ask_request').style.visibility = 'visible';
+            document.getElementById('ask_request').style.display = 'block';
+
+
+        };
+    
+        // Parse the JSON data provided by Django's context
+        const csvData = jsonData.all_videos_csv; // This is your CSV data as a string
+        const csvData2 = jsonData.channel_df_csv;
+        const csvData3 = jsonData.all_playlists_csv;
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = `Given the dataset on the channel content, ${messageInput.value}. Please answer only in natural language and do not return dataframes, arrays, or tables. Provide a summarized answer that's easy to understand for someone not familiar with data analysis.`;
+            
+            const requestText = 'Your Request: ' + messageInput.value;
+            const requestElmenet  = document.getElementById('ask_request');
+            requestElmenet.innerHTML = requestText
+
+            document.getElementById('loading-spinner').style.visibility = 'visible';
+            document.getElementById('loading-spinner').style.display = 'block';
+
+            document.getElementById('response').style.visibility = 'hidden';
+            document.getElementById('response').style.display = 'none';
+            document.getElementById('ask_request').style.visibility = 'hidden';
+            document.getElementById('ask_request').style.display = 'none';
+
+            // Here you package both the message and the CSV data into one WebSocket message
+            ws.send(JSON.stringify({'message': message, 'csvData': [csvData, csvData2, csvData3]}));
+    
+            messageInput.value = ''; // Clear the input after sending
+        }
+    </script>
+
+    <script>
+
+        
+        const downloadButton = document.getElementById('download_graph');
+        const downloadLink = document.getElementById('download_link');
+
+        const ws1 = new WebSocket('ws://' + window.location.host + '/ws/echo1/');
+        
+        ws1.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            let imageElement = document.getElementById('base64Image');
+            
+            let base64String = data.message
+            if (!base64String.startsWith('data:image/png;base64,')) {
+                base64String = 'data:image/png;base64,' + base64String;
+            }
+            imageElement.src = base64String;
+            
+            const blob = base64ToBlob(base64String, 'image/png');
+    
+            // Create a URL for the Blob
+            const blobUrl = URL.createObjectURL(blob);
+        
+            // Assuming you have an anchor tag with id 'downloadLink'
+            downloadLink.href = blobUrl;
+            downloadLink.setAttribute('download', 'graph_image.png');
+            
+            // Optionally, enable the download link if it was previously disabled
+            downloadLink.disabled = false;
+
+            document.getElementById('loading-spinner1').style.visibility = 'hidden';
+            document.getElementById('loading-spinner1').style.display = 'none';
+            document.getElementById('response1').style.visibility = 'visible';
+            document.getElementById('response1').style.display = 'flex';
+
+
+        };
+    
+        // Parse the JSON data provided by Django's context
+        
+        function sendMessageGraphs() {
+            const messageInput = document.getElementById('messageInput1');
+            const message = messageInput.value + ', first clear the previous plt, convert the graph image to base64 value such as (data:image/png;base64,iVBORw0KGgo...) and print only the Base64 value, do not save the photo';
+            const datasetSelection = document.querySelector('input[name="dataset1"]:checked');
+            let selectedDataset = '';
+            const requestText = 'Your Request: ' + messageInput.value;
+            const requestElmenet  = document.getElementById('graph_request');
+            requestElmenet.innerHTML = requestText
+        
+            if (datasetSelection) {
+                selectedDataset = datasetSelection.value;
+            } else {
+                alert('Please select a dataset.');
+                return; // Exit the function if no dataset is selected
+            }
+        
+            const csvData = jsonData[selectedDataset]; // This selects the dataset based on the user's choice
+        
+            document.getElementById('loading-spinner1').style.visibility = 'visible';
+            document.getElementById('loading-spinner1').style.display = 'block';
+        
+            document.getElementById('response1').style.visibility = 'hidden';
+            document.getElementById('response1').style.display = 'none';
+        
+            // Here you package both the message and the selected CSV data into one WebSocket message
+            ws1.send(JSON.stringify({'message': message, 'csvData': csvData}));
+        
+            messageInput.value = ''; // Clear the input after sending
+        }
+        
+    </script>
+
+
+    <script>
+
+        
+        const downloadLinkModify = document.getElementById('download_link_dataset');
+
+        const ws3 = new WebSocket('ws://' + window.location.host + '/ws/echo3/');
+        
+        ws3.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            
+            // Assuming 'data.preview' contains HTML for the first 3 rows
+            document.getElementById('table_place').innerHTML = data.preview; // ID '2' seems to be the container for the table preview, adjust as necessary
+            
+            // Assuming 'data.csv' contains the full CSV as a string
+            const csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(data.csv);
+            downloadLinkModify.setAttribute("href", csvContent);
+            dataset_name = 
+            downloadLinkModify.setAttribute("download", data.dataset_name);
+            
+            document.getElementById('loading-spinner2').style.visibility = 'hidden';
+            document.getElementById('loading-spinner2').style.display = 'none';
+            document.getElementById('response2').style.visibility = 'visible';
+            document.getElementById('response2').style.display = 'block';
+        };
+        
+    
+        // Parse the JSON data provided by Django's context
+        
+        function sendMessageModify() {
+            const messageInput = document.getElementById('messageInput2');
+            const requestText = 'Your Request: ' + messageInput.value;
+            const requestElmenet  = document.getElementById('modify_request');
+            requestElmenet.innerHTML = requestText
+            const message = messageInput.value + ', return a dataframe';
+            const datasetSelection = document.querySelector('input[name="dataset"]:checked');
+            let selectedDataset = '';
+        
+            if (datasetSelection) {
+                selectedDataset = datasetSelection.value;
+            } else {
+                alert('Please select a dataset.');
+                return; // Exit the function if no dataset is selected
+            }
+        
+            const csvData = jsonData[selectedDataset]; // This selects the dataset based on the user's choice
+        
+            document.getElementById('loading-spinner2').style.visibility = 'visible';
+            document.getElementById('loading-spinner2').style.display = 'block';
+        
+            document.getElementById('response2').style.visibility = 'hidden';
+            document.getElementById('response2').style.display = 'none';
+            dataset_name = selectedDataset + '_modified.csv'
+            // Here you package both the message and the selected CSV data into one WebSocket message
+            ws3.send(JSON.stringify({'message': message, 'csvData': csvData, 'dataset_name': dataset_name}));
+        
+            messageInput.value = ''; // Clear the input after sending
+        }
+        
+    </script>
+  </body>
+</html>

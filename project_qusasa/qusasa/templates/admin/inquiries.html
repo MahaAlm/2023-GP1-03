@@ -1,0 +1,195 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qusasa | Welcome</title>
+    <!-- Linking CSS -->
+    <link rel="stylesheet" href="{% static 'qusasa/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'qusasa/css/admin.css' %}">
+    <link rel="shortcut icon" href="{% static 'qusasa/images/Qusasa end.png' %}" type="image/png">
+
+    <script src="https://kit.fontawesome.com/b50b47369c.js" crossorigin="anonymous"></script>
+
+<style>
+  .controls-container {
+    display: flex;
+    justify-content: space-between; /* This will push the button and the filter to opposite ends */
+    align-items: center; /* This will align them vertically */
+    padding: 0 20px; /* Replace with actual padding you need */
+}
+
+.add-inquiry-button {
+}
+
+.filter-by-status {
+}
+
+.status-filter {
+  margin-bottom: 20px;
+}
+
+.status-filter label {
+  margin-right: 10px;
+}
+
+.status-filter select {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}    
+
+</style>  </head>
+<body> 
+    <!-- <img class="polygon" src="{% static 'qusasa/images/Frame 2.png'%}" alt="Description of Image" class="full-size-absolute"> -->
+    
+    <!-- <div class="navigation">
+        <img class="static-img" src="{% static 'qusasa/images/qusasa.png' %}" alt="">
+
+        <div class="navs">
+            <a href="{% url 'logout' %}">Log out</a>
+        </div>
+    </div> -->
+    <a class="log-out" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i>  Log out</a>
+
+    <div class="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+    <div class="side-nav">
+        <div class="side-nav-container">
+            <img src="{% static 'qusasa/images/Qusasa end.png'%}" alt="">
+            <a class="el" href="{% url 'admin:qusasa_customuser_changelist' %}"><i class="fa-solid fa-user"></i> Qusasa users</a>
+            <a class="el"  id="el-current" href="{% url 'inquiries' %}"><i class="fa-solid fa-circle-question"></i> Inquiries</a>  
+        </div>    
+    </div>
+
+    <div class="content">
+        <div class="welcome">
+            View User's Inquiries
+        </div>
+        <div class="history">
+      {% if posts %}
+        <article class="media content-section">
+          <div class="results">
+            <div class="controls-container">
+
+<div class="status-filter">
+  <label for="statusFilter">Filter by status:</label>
+  <select id="statusFilter" onchange="filterStatus()">
+      <option value="all">All</option>
+      <option value="WAITING">Waiting</option>
+      <option value="RESOLVED">Resolved</option>
+  </select>
+</div>
+</div>
+
+            <table id="result_list">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Date Posted</th>
+                  <th scope="col">Author</th>
+                  <th scope="col">Inquiry Content</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for post in posts %}
+                <tr>
+                  <td>{{ post.id }}</td>
+                  <td><a href="{% url 'display_inquiry' post.id %}" style="color: blue; text-decoration: underline;">{{ post.title }}</a></td>
+                  <td>{{ post.date_posted|date:"F d, Y" }}</td>
+                  <td>{{ post.author }}</td>
+                  <td>{{ post.InqContent }}</td>
+                  <td>{{ post.status }}</td>
+
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+
+
+        </article>
+    {%else%}
+
+    <h3>There is no inquiries yet.</h3>
+    {%endif%}
+        </div>
+    </div>
+
+
+    <script>
+      function filterStatus() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("statusFilter");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("result_list"); // Use the correct ID for your table
+        tr = table.getElementsByTagName("tr");
+      
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[5]; // Index of 'Status' column in your table
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (filter === "ALL" || txtValue.toUpperCase() === filter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
+        }
+      }
+      </script>
+
+    <!-- Linking JS at the bottom for better performance -->
+    <script src="{% static 'qusasa/js/script.js' %}"></script>
+
+
+<script>
+  document.querySelector('.hamburger').addEventListener('click', function(e) {
+    let navs = document.querySelector('.side-nav');
+
+    if (navs.style.visibility === 'hidden' || navs.style.visibility === '') {
+        navs.style.visibility = 'visible';
+        navs.style.opacity = '1';
+        navs.style.transform = 'scale(1)';
+    } else {
+        hideSideNav(navs);
+    }
+
+    e.stopPropagation(); // Prevent the click from reaching the document
+});
+
+document.addEventListener('click', function(e) {
+  // Check if the screen width is less than 1000px
+  if (window.innerWidth < 1000) {
+      let navs = document.querySelector('.side-nav');
+      let navContainer = document.querySelector('.side-nav-container');
+
+      // If the click target is not within the navContainer and not on the hamburger, hide the side-nav
+      if (!navContainer.contains(e.target) && !document.querySelector('.hamburger').contains(e.target)) {
+          hideSideNav(navs);
+      }
+  }
+});
+
+
+function hideSideNav(navs) {
+    navs.style.opacity = '0';
+    navs.style.transform = 'scale(0.5)';
+    setTimeout(() => { navs.style.visibility = 'hidden'; }, 1000);
+}
+
+
+</script>
+
+</body>
+</html>
+

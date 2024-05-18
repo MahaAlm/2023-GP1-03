@@ -1,0 +1,406 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qusasa | user inquiries </title>
+    <!-- Linking CSS -->
+    <link rel="stylesheet" href="{% static 'qusasa/css/admin.css' %}">
+
+    <link rel="stylesheet" href="{% static 'qusasa/css/base.css' %}">
+    <link rel="shortcut icon" href="{% static 'qusasa/images/Qusasa end.png' %}" type="image/png">
+
+    <script src="https://kit.fontawesome.com/b50b47369c.js" crossorigin="anonymous"></script>
+    <style>
+      .content {
+        margin-top: 0;
+      }
+
+      .content .welcome {
+        margin-top:0;
+      }
+      .cards {
+          justify-content: start;
+      }
+  
+      .card {
+          position: relative;
+      }
+  
+      .card:hover {
+          transform: translate(0, -5px);
+          transition: 0.2s;
+      }
+  
+      .card:hover .feature-name {
+          background-color: white;
+          color: black;
+          transition-duration: 0.5s;
+          margin-top: 1rem;
+          opacity: 1;
+      
+      }
+      
+  
+      
+  .card:hover .card__thumb  {
+      height: 100%;
+      overflow: hidden;
+      -webkit-transition: height 0.5s;
+      transition: height 0.5s;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+  
+  }
+  
+  .card:hover .card__thumb img {
+      max-width: 80%;
+      max-height: 50%;
+      display: block;
+      margin: 0;
+      padding: 0;
+      opacity: 1;
+      -webkit-transform: scale(1);
+      transform: scale(1);
+      -webkit-transition: opacity 0.5s, -webkit-transform 0.5s;
+      transition: opacity 0.5s, -webkit-transform 0.5s;
+      transition: opacity 0.5s, transform 0.5s;
+      transition: opacity 0.5s, transform 0.5s, -webkit-transform 0.5s;
+  }
+  
+      .delete-checkbox {
+          visibility: hidden;
+          position: absolute;
+          
+      }
+  
+      .delete-checkbox + label {
+          position: absolute;
+          top: 5%;
+          right: 5%;
+          padding: 20px;
+          border: none; /* Border color */
+          border-radius: 50%; /* Make it circular */
+          cursor: pointer;
+          background: rgb(117, 211, 210);
+          z-index: 200;
+      }
+      
+      .delete-checkbox:checked + label {
+          background-color: #108888; /* Background color when checked */
+      }
+      
+      .delete-checkbox + label:after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 20px; /* Size of the inner circle */
+          height: 20px;
+          border-radius: 50%;
+          background-color: white; /* Inner circle color */
+          transform: translate(-50%, -50%) scale(0);
+          transition: transform 0.3s ease;
+      }
+      
+      .delete-checkbox:checked + label:after {
+          transform: translate(-50%, -50%) scale(1);
+      }
+      
+    
+      .buttons {
+          display: flex;
+          flex-direction: column;
+          cursor: pointer;
+      margin: 1rem;
+      width: 220px;
+      height: 280px;
+      background-color: #fff;
+      box-shadow: 0 0 5px rgba(95, 95, 95, 0.058);
+      overflow: hidden;
+      -webkit-transition: box-shadow 0.5s;
+      transition: box-shadow 0.5s;
+      font-family: 'Raleway';
+      
+      }
+
+      .content {
+        text-align: left;
+        
+      
+    }
+  
+    .content .history {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: start;
+      align-items: center;
+  }
+  
+  .content .history .header{
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .content .history .header .feature-head{
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .content .history .header .feature-text{
+    width: 90%;
+    justify-content: stretch;
+  }
+  
+  .content .history .header .feature-text h1{
+    margin-top: 0;
+    color: rgb(98, 26, 165);
+  }
+  
+  
+  .history form textarea{
+    border: 1px solid rgb(199, 199, 199);
+    outline: none;
+    background-color: rgb(243, 243, 243);
+    padding: 30px;
+    width: 100%;
+    border-radius: 10px;
+    height: 10rem;
+    font-family: 'Raleway';
+    margin-bottom: 1rem;
+  
+  }
+  
+  
+  .history form button{
+  
+    width: 15rem;
+  
+  
+  }
+  
+  .history .row{
+  
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: stretch;
+  
+  
+  }
+  
+  
+  .history .inquery-box{
+  
+    background-color: rgb(243, 243, 243);
+    padding: 10px 1rem;
+    border-radius: 10px;
+    margin-top:0.8rem;
+    width: 20rem;
+  
+    font-size: 1rem;
+    color: rgb(96, 96, 96);
+    height: 10rem;
+    outline: none;
+    border: none;
+  
+  
+  
+  }
+  
+  .history .inquery-el {
+    width: 100%;
+    margin-right: 3rem;}
+
+    #charCount {
+    color: green;
+    font-weight: bold;
+}
+
+#charCount.near-limit {
+    color: orange;
+}
+
+#charCount.limit-reached {
+    color: red;
+}
+
+label {
+   cursor: pointer;
+   /* Style as you please, it will become the visible UI component. */
+   padding: 8px 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 2%;
+}
+label:hover {
+    background-color: #0056b3;
+}
+
+    </style>
+        <script>
+          function updateCounter() {
+              const maxChars = 60;
+              const input = document.getElementById('title'); // Change to 'title' if it's an input field
+              const charCount = document.getElementById('charCount');
+              const charsRemaining = maxChars - input.value.length;
+          
+              charCount.textContent = `${charsRemaining} `;
+          
+              // Update styles based on characters remaining
+              if (charsRemaining <= 10) {
+                  charCount.className = 'near-limit';
+              } else {
+                  charCount.className = '';
+              }
+              if (charsRemaining <= 0) {
+                  charCount.className = 'limit-reached';
+              }
+          }
+          document.addEventListener('DOMContentLoaded', updateCounter);
+          
+          function previewImage() {
+        var file = document.getElementById('upload-photo').files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var displayImage = document.getElementById('display-image');
+            displayImage.src = e.target.result;
+            displayImage.style.display = 'block';  // Make the image visible by changing the display property
+        }
+        reader.readAsDataURL(file);
+    }
+    
+          </script>    
+</head>
+<body> 
+
+    <!-- <img class="polygon" src="{% static 'qusasa/images/Frame 2.png'%}" alt="Description of Image" class="full-size-absolute"> -->
+    
+    <!-- <div class="navigation">
+        <img class="static-img" src="{% static 'qusasa/images/qusasa.png' %}" alt="">
+
+        <div class="navs">
+            <a href="{% url 'logout' %}">Log out</a>
+        </div>
+    </div> -->
+    <a class="log-out" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i>  Log out</a>
+
+    <div class="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+      {% include 'side_nav.html' %}
+
+    <div class="content">
+        
+
+        <ul class="breadcrumbs">
+          <li><a href="{% url 'base' %}" {% if request.resolver_match.url_name == 'base' %} id="current" {% endif %}> Home</a></li>
+          <li><a href="{% url 'user_inquiries' %}" {% if request.resolver_match.url_name == 'user_inquiries' %} id="current" {% endif %}> inquiries</a></li>
+      </ul>
+
+      <div class="history">
+        <div class="header">
+            <div class="feature-head">
+                <div class="feature-text">
+
+                  <form action="{% url 'add_inquiry' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="feature-text">
+                            <h1>Add Inquiry</h1>
+                            <div class="inquery-el" style="margin-top: 3rem;">
+                                <p><strong>title:</strong></p>
+                                <!-- Ensure the textarea has a name attribute -->
+                                <input class="inquery-box" style="width: 100%; height: 1.2rem;" id='title' name="title" maxlength="60" oninput="updateCounter()"/>
+                                <span id="charCount">60</span> characters remaining
+                            </div>
+                            <div class="inquery-el" style="margin-top: 3rem;">
+                                <p><strong>Explain your issue:</strong></p>
+                                <!-- Ensure the textarea has a name attribute -->
+                                <textarea class="inquery-box" style="width: 100%" name="inq_content"></textarea>       
+                            </div>
+                            <div class="inquery-el" style="margin-top: 3rem;">
+                              <p><b>Add an Image</b></p>
+                              <br>
+                              <label for="upload-photo">Upload Image</label>
+                              <input type="file" name="picture" id="upload-photo" accept="image/*" style="display: none;" onchange="previewImage();" />
+                              <br><br>
+                              <img id="display-image" alt="Image will be displayed here after uploading." style="margin: 3.5%; display: none;  width: 100px; height: 100px; border-radius: 10px;"/>
+                              </div>
+
+                            <button type="submit">Submit Inquiry</button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+            
+            
+
+        </div>
+            
+        
+      </div>
+    </div>
+
+
+   
+
+    <!-- Linking JS at the bottom for better performance -->
+    <script src="{% static 'qusasa/js/script.js' %}"></script>
+
+
+<script>
+  document.querySelector('.hamburger').addEventListener('click', function(e) {
+    let navs = document.querySelector('.side-nav');
+
+    if (navs.style.visibility === 'hidden' || navs.style.visibility === '') {
+        navs.style.visibility = 'visible';
+        navs.style.opacity = '1';
+        navs.style.transform = 'scale(1)';
+    } else {
+        hideSideNav(navs);
+    }
+
+    e.stopPropagation(); // Prevent the click from reaching the document
+});
+
+document.addEventListener('click', function(e) {
+  // Check if the screen width is less than 1000px
+  if (window.innerWidth < 1000) {
+      let navs = document.querySelector('.side-nav');
+      let navContainer = document.querySelector('.side-nav-container');
+
+      // If the click target is not within the navContainer and not on the hamburger, hide the side-nav
+      if (!navContainer.contains(e.target) && !document.querySelector('.hamburger').contains(e.target)) {
+          hideSideNav(navs);
+      }
+  }
+});
+
+
+function hideSideNav(navs) {
+    navs.style.opacity = '0';
+    navs.style.transform = 'scale(0.5)';
+    setTimeout(() => { navs.style.visibility = 'hidden'; }, 1000);
+}
+
+
+</script>
+
+</body>
+</html>
+
