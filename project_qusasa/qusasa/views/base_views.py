@@ -114,3 +114,6 @@ def delete_selected_templates(request):
 
         return JsonResponse({'status': 'success', 'message': 'Templates deleted successfully.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+def health_check(request):
+    return HttpResponse("OK", content_type="text/plain")

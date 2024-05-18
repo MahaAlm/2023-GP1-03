@@ -271,9 +271,9 @@ def prepare_analysis_context_playlist(playlist_info_df, all_videos_info_df, top_
    
 @shared_task
 def perform_playlist_analysis(history_id, scheduled_analysis_id):
+    logger.info(f"History ID: {history_id}")
     scheduled_analysis = ScheduledAnalysis.objects.get(id=scheduled_analysis_id)
 
-    logger.info(f"History ID: {history_id}")
     if scheduled_analysis.is_active:
 
         try:

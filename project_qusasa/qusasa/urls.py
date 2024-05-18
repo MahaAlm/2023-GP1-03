@@ -25,7 +25,7 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    
+    path('logoutad/', views.logoutadmin_view, name='logoutad'),
     
     path('download_docx/<path:filename>/', views.download_docx, name='download_docx'),
 
@@ -118,6 +118,7 @@ urlpatterns = [
     path('user_display_inquiry/<int:history_id>/', views.user_display_inquiry, name='user_display_inquiry'),
 
     path('add_inquiry', views.add_inquiry, name='add_inquiry'),
+    path('healthcheck/', views.health_check, name='healthcheck'),
 
 
 ]

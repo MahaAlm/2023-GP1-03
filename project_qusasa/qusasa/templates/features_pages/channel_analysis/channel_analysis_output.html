@@ -417,6 +417,8 @@
     
     }
 
+   
+
     .popup-dataset {
         display: none;
         position: fixed;
@@ -575,11 +577,24 @@
         </div>
     </div>
     
+    <div id="popup_close" class="overlay">
+        <div class="popup">
+            <h2>Do you want to save your results?</h2>
+            <div class="text">
+                If you choose to save, you will be able to access the content later.
+                <div class="popup-buttons">
+                    <button class="yes" onclick="saveResults()">Yes, save them</button>
+                    <a href="{% url 'base' %}"><button>Don't save, just exit</button></a>
+                </div>   
+            </div>
+        </div>
+    </div>
+    
     <div class="output-container">
 
         <div class="mini-container">
             <div class="output-header " data-aos="fade-up">
-                <h1>Your Channel Analysis is ready!</h1>
+                <h1>Your Channel Analysis is ready!!</h1>
                 <p>Our channel analysis will give you an overview over the channel, what does influence its performance, and a closer look on its top and worst performing videos...</p>
                 
                    
@@ -606,7 +621,7 @@
                 <i class="fa-solid fa-table"></i>
                 <div class="download-text">
                     <div class="text">
-                    <h3>The Channel datasets</h3>
+                        <h3>The Channel datasets</h3>
                     <p>A dataset for the channel info, a dataset for channel videos, and a dataset for channel palylists</p>
                     </div>
                     
@@ -879,10 +894,10 @@
             </div>
         </div>
 
-        <div class="top-videos" data-aos="fade-up" id="section4">
+        <div class="top-videos" data-aos="fade-up" >
             <h1 data-aos="fade-up">Look closer</h1>
             <p data-aos="fade-up">observe the top and worst performing videos on the channel to have a closer look on the people opinions and engagement with the content</p>
-            <div class="videos" >
+            <div class="videos" id="section4" >
                 <div class="mini-container"  data-aos="fade-up">
                     <h1 data-aos="fade-up" style="margin-bottom: 4rem;">Top performing videos</h1>
                     {% for video in top_5_videos%}
@@ -939,7 +954,6 @@
                 </div>
                 
                 
-            </div>
 
             <div class="videos"  id="section5">
                 <div class="mini-container"  data-aos="fade-up">
@@ -992,263 +1006,242 @@
                         </div>
                         
                         {%endif%}
-                    
-                </div>
-                
-                
+                    </div>
+                </div> 
             </div>
-            
-        </div>
-        
-
-        <div class="mini-container" id="section6">
-            <div class="ask-Ai">
-                <div id="step1" class="ask-ai-intro">
-                    <h2>Chat With Datasets Using AI</h2>
-                    <button onclick="nextStep()"><i class="fa-solid fa-play"></i></button>
-                </div>
-                
-                <div id="step2" style="display: none;" class="explanation-container">
-                    <div class="explanation">
-                        <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
-                        <span>Chat With Datasets</span> is like having a super-smart buddy who helps you unravel the mysteries hidden in your data! Want to know how many videos popped up in February? Or maybe you're just curious about what a channel or playlist is all about? No worries! Our chatbot is here to make diving into your data a breeze. So go ahead, ask away, and let's uncover some awesome insights together!
-                    </div>
-                    <div class="datasets">
-                        <h2>Learn more about your Datasets!</h2>
-                        <p>Tap on the datasets listed below to uncover detailed description of their fields and to get inspired by suggestions for questions you can explore with:
-                        </p>
-                        <div class="datasets-info">
-                            <div class="dataset" onclick="showDatasetInfo('ChannelVideos')">
-                                <i class="fa-solid fa-table"></i>
-                                <p>Channel Videos Dataset</p>
-                            </div>
-                            <div class="dataset" onclick="showDatasetInfo('ChannelPlaylists')">
-                                <i class="fa-solid fa-table"></i>
-                                <p>Channel Playlists Dataset</p>
-                            </div>
-                            <div class="dataset" onclick="showDatasetInfo('ChannelInfo')">
-                                <i class="fa-solid fa-table"></i>
-                                <p>Channel Info Dataset</p>
-                            </div>
-                            
-                            
-                            
-                        </div>
-                    </div>
-                    <button onclick="nextStep()">Got it? Start Now!   <i class="fa-solid fa-forward"></i></button>
-                </div>
-                
-                
-                
-                <div id="step3" style="display: none;">
-                    
-                    <div class="ask-Ai">
-                        <div class="col">
-                            <h2 data-aos="fade-up">Chat With Datasets Using AI</h2>
-                            <div class="datasets smaller-datasets" style="width: 100%; display:flex; flex-direction:row; justify-content:center; align-items:center;">
-                                <div class="datasets-info" style="display:flex;width: 100%; flex-direction:row; justify-content:space-between; align-items:center;" >
-                                    <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
-                                        <i class="fa-solid fa-table"></i>
-                                        <p>Channel Videos Dataset</p>
-                                    </div>
-                                    <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
-                                        <i class="fa-solid fa-table"></i>
-                                        <p>Channel Playlists Dataset</p>
-                                    </div>
-                                    <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
-                                        <i class="fa-solid fa-table"></i>
-                                        <p>Channel Info Dataset</p>
-                                    </div>
-                                    
-                                    
-                                    
-                                </div>
-                            </div>
-                            <div class="suggestions">
-                                <h3 data-aos="fade-up">What are the common topics in the channel?</h3>
-                                <h3 data-aos="fade-up">What are the most viewed videos and their characteristics?</h3>
-                                <h3 data-aos="fade-up">What are the common categories in the channel?</h3>
-                            </div>
-                            <div class="chat" data-aos="fade-up">
-                            <textarea id="messageInput" type="text" placeholder="Enter your question here"></textarea>
-                            <br>
-                            <button onclick="sendMessage()">Send</button>
-                            
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h3 data-aos="fade-up">Answer</h3>
-                            
-                            <div class="answer" data-aos="fade-up">
-                                <div id='ask_request' class="request">
-                                    
-                                </div>
-                                <div id="loading-spinner" class="loading-spinner floating">
-                                    <!-- Your spinner or loading message here -->
-                                    <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
-                                    <h2>Waiting for the Assistant to process...</h2>
-                                </div>
-                                <div id="response">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
-                
                
-                
-                
-                
-            </div>
-            
-
-        </div>
-
-        <div class="mini-container" id="section7">
-
-            <div class="ask-Ai">
-                <div id="step_graphs1" class="ask-ai-intro graphs_background">
-                    <h2>Generate Graphs With AI</h2>
-                    <button onclick="nextStepGraphs()"><i class="fa-solid fa-play"></i></button>
-                </div>
-                
-                <div id="step_graphs2" style="display: none;" class="explanation-container">
-                    <div class="explanation">
-                        <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
-                        <span>Generate Graphs With AI</span> allows you to step into the fun world of data visualization with us. Pick a dataset you like and imagine any chart you want to bring to life. Want to add a personal touch? Feel free to play with font sizes, pick your favorite colors for the graph, and choose a font style that really represents your vibe. We're here to make exploring data easy and enjoyable for everyone. So, let's start crafting your perfect chart together!
+            <div class="mini-container" id="section6">
+                <div class="ask-Ai">
+                    <div id="step1" class="ask-ai-intro">
+                        <h2>Chat With Datasets Using AI</h2>
+                        <button onclick="nextStep()"><i class="fa-solid fa-play"></i></button>
                     </div>
-                    <div class="datasets">
-                        <h2>Learn more about your Datasets!</h2>
-                        <p>Tap on the datasets listed below to uncover detailed description of their fields and to get inspired by suggestions for questions you can explore with:</p>
-                        <div class="datasets-info">
-                            <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
-                                <i class="fa-solid fa-table"></i>
-                                <p>Channel Videos Dataset</p>
-                            </div>
-                            <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
-                                <i class="fa-solid fa-table"></i>
-                                <p>Channel Playlists Dataset</p>
-                            </div>
-                            <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
-                                <i class="fa-solid fa-table"></i>
-                                <p>Channel Info Dataset</p>
-                            </div>
-                            
-                            
-                            
-                        </div>
-                    </div>
-                    <button onclick="nextStepGraphs()">Got it? Start Now!   <i class="fa-solid fa-forward"></i></button>
-                </div>
-                
-                
-                
-                <div id="step_graphs3" style="display: none; ">
                     
-                    <div class="ask-Ai" style="display:flex; flex-direction: column; justify-content:center; align-items:center; width:100%; height:100%;">
-                        <div class="col" style="display:flex; flex-direction: row; width: 100%; margin:0; justify-content:center; align-items:start;">
-                            <h2 data-aos="fade-up" style="width: 25%; margin-right:0rem;">Generate Graphs with AI</h2>
-                            <div class="suggestions" style="margin-right: 3rem;">
-                                <input type="radio" id="channelVideosDataset1" name="dataset1" value="all_videos_csv" data-aos="fade-up" checked>
-                                <label for="channelVideosDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Videos Dataset</label><br>
-                                <input type="radio" id="channelPlaylistsDataset1" name="dataset1" value="all_playlists_csv" data-aos="fade-up">
-                                <label for="channelPlaylistsDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Playlists Dataset</label><br>
-                                <input type="radio" id="channelInfoDataset1" name="dataset1" value="channel_df_csv" data-aos="fade-up">
-                                <label for="channelInfoDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Info Dataset</label>
-                            </div>
-                            <div class="chat" data-aos="fade-up" style="margin-top: 0; ">
-                            <textarea id="messageInput1" type="text" placeholder="Enter your request here" style="margin-top: 0; width:20rem; margin-left: 0; height:5rem"></textarea>
-                            <br>
-                            <button onclick="sendMessageGraphs()">Create Graph</button>
-                            
+                    <div id="step2" style="display: none;" class="explanation-container">
+                        <div class="explanation">
+                            <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                            <span>Chat With Datasets</span> is like having a super-smart buddy who helps you unravel the mysteries hidden in your data! Want to know how many videos popped up in February? Or maybe you're just curious about what a channel or playlist is all about? No worries! Our chatbot is here to make diving into your data a breeze. So go ahead, ask away, and let's uncover some awesome insights together!
+                        </div>
+                        <div class="datasets">
+                            <h2>Learn more about your Datasets!</h2>
+                            <p>Tap on the datasets listed below to uncover detailed description of their fields and to get inspired by suggestions for questions you can explore with:
+                            </p>
+                            <div class="datasets-info">
+                                <div class="dataset" onclick="showDatasetInfo('ChannelVideos')">
+                                    <i class="fa-solid fa-table"></i>
+                                    <p>Channel Videos Dataset</p>
+                                </div>
+                                <div class="dataset" onclick="showDatasetInfo('ChannelPlaylists')">
+                                    <i class="fa-solid fa-table"></i>
+                                    <p>Channel Playlists Dataset</p>
+                                </div>
+                                <div class="dataset" onclick="showDatasetInfo('ChannelInfo')">
+                                    <i class="fa-solid fa-table"></i>
+                                    <p>Channel Info Dataset</p>
+                                </div>
+                                
+                                
+                                
                             </div>
                         </div>
-                        <div class="col"style="width: 100%; display:flex; flex-direction:row; margin-top:3rem;  align-items:center;" >
-                            <h3 style="margin:0; margin-right: 3rem; font-size:1rem; margin-bottom:2rem;">Recheck your <br>datasets <br> Information:</h3>
-                            <div class="datasets smaller-datasets" style="width: 40%; display:flex; flex-direction:row; justify-content:center; align-items:center;">
-                                <div class="datasets-info" style="display:flex;width: 100%; flex-direction:row; justify-content:space-between; align-items:center;" >
-                                    <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
-                                        <i class="fa-solid fa-table"></i>
-                                        <p>Channel Videos Dataset</p>
+                        <button onclick="nextStep()">Got it? Start Now!   <i class="fa-solid fa-forward"></i></button>
+                    </div>
+                    
+                    
+                    
+                    <div id="step3" style="display: none;">
+                        
+                        <div class="ask-Ai">
+                            <div class="col">
+                                <h2 data-aos="fade-up">Chat With Datasets Using AI</h2>
+                                <div class="datasets smaller-datasets" style="width: 100%; display:flex; flex-direction:row; justify-content:center; align-items:center;">
+                                    <div class="datasets-info" style="display:flex;width: 100%; flex-direction:row; justify-content:space-between; align-items:center;" >
+                                        <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
+                                            <i class="fa-solid fa-table"></i>
+                                            <p>Channel Videos Dataset</p>
+                                        </div>
+                                        <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
+                                            <i class="fa-solid fa-table"></i>
+                                            <p>Channel Playlists Dataset</p>
+                                        </div>
+                                        <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
+                                            <i class="fa-solid fa-table"></i>
+                                            <p>Channel Info Dataset</p>
+                                        </div>
+                                        
+                                        
+                                        
                                     </div>
-                                    <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
-                                        <i class="fa-solid fa-table"></i>
-                                        <p>Channel Playlists Dataset</p>
-                                    </div>
-                                    <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
-                                        <i class="fa-solid fa-table"></i>
-                                        <p>Channel Info Dataset</p>
-                                    </div>
-                                    
-                                    
-                                    
+                                </div>
+                                <div class="suggestions">
+                                    <h3 data-aos="fade-up">What are the common topics in the channel?</h3>
+                                    <h3 data-aos="fade-up">What are the most viewed videos and their characteristics?</h3>
+                                    <h3 data-aos="fade-up">What are the common categories in the channel?</h3>
+                                </div>
+                                <div class="chat" data-aos="fade-up">
+                                <textarea id="messageInput" type="text" placeholder="Enter your question here"></textarea>
+                                <br>
+                                <button onclick="sendMessage()">Send</button>
+                                
                                 </div>
                             </div>
-                            
-                        </div>
-                        <div class="col" style="width: 100%">
-                            <h3 data-aos="fade-up">Output</h3>
-                            
-                            <div class="answer answer_output" data-aos="fade-up" style="height: 48rem; max-height:48rem;">
-                                <div id="loading-spinner1" class="loading-spinner floating">
-                                    <!-- Your spinner or loading message here -->
-                                    <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
-                                    <h2>Waiting for the Generator to process...</h2>
-                                </div>
-                                <div id="response1">
-                                    <div id='graph_request' class="request">
-                                    
+                            <div class="col">
+                                <h3 data-aos="fade-up">Answer</h3>
+                                
+                                <div class="answer" data-aos="fade-up">
+                                    <div id='ask_request' class="request">
+                                        
                                     </div>
-                                    
-                                    <img id="base64Image" src="" alt="Image from Base64" style="max-width: 100%; margin:0;" />
-                                    <a id="download_link" ><i class="fa-solid fa-download"></i> Download Image</a>
-
+                                    <div id="loading-spinner" class="loading-spinner floating">
+                                        <!-- Your spinner or loading message here -->
+                                        <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                                        <h2>Waiting for the Assistant to process...</h2>
+                                    </div>
+                                    <div id="response">
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                     </div>
                     
-
+                   
+                    
+                    
+                    
                 </div>
-            </div>
-        </div>
-
-        <div class="mini-container " id="section8">
-            <div class="schedule-container">
-                <h1>Do you want to schedule your results?</h1>
-                <p>You can schedule the analysis to be recived at a certain times hourly, daily, or even monthly!</p>
-                <a href="{% url 'schedule_channel_analysis_form' %}"><button>Schedule my Analysis Now</button></a>
+                
     
             </div>
-           
+    
+            <div class="mini-container" id="section7">
+    
+                <div class="ask-Ai">
+                    <div id="step_graphs1" class="ask-ai-intro graphs_background">
+                        <h2>Generate Graphs With AI</h2>
+                        <button onclick="nextStepGraphs()"><i class="fa-solid fa-play"></i></button>
+                    </div>
+                    
+                    <div id="step_graphs2" style="display: none;" class="explanation-container">
+                        <div class="explanation">
+                            <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                            <span>Generate Graphs With AI</span> allows you to step into the fun world of data visualization with us. Pick a dataset you like and imagine any chart you want to bring to life. Want to add a personal touch? Feel free to play with font sizes, pick your favorite colors for the graph, and choose a font style that really represents your vibe. We're here to make exploring data easy and enjoyable for everyone. So, let's start crafting your perfect chart together!
+                        </div>
+                        <div class="datasets">
+                            <h2>Learn more about your Datasets!</h2>
+                            <p>Tap on the datasets listed below to uncover detailed description of their fields and to get inspired by suggestions for questions you can explore with:</p>
+                            <div class="datasets-info">
+                                <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
+                                    <i class="fa-solid fa-table"></i>
+                                    <p>Channel Videos Dataset</p>
+                                </div>
+                                <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
+                                    <i class="fa-solid fa-table"></i>
+                                    <p>Channel Playlists Dataset</p>
+                                </div>
+                                <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
+                                    <i class="fa-solid fa-table"></i>
+                                    <p>Channel Info Dataset</p>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <button onclick="nextStepGraphs()">Got it? Start Now!   <i class="fa-solid fa-forward"></i></button>
+                    </div>
+                    
+                    
+                    
+                    <div id="step_graphs3" style="display: none; ">
+                        
+                        <div class="ask-Ai" style="display:flex; flex-direction: column; justify-content:center; align-items:center; width:100%; height:100%;">
+                            <div class="col" style="display:flex; flex-direction: row; width: 100%; margin:0; justify-content:center; align-items:start;">
+                                <h2 data-aos="fade-up" style="width: 25%; margin-right:0rem;">Generate Graphs with AI</h2>
+                                <div class="suggestions" style="margin-right: 3rem;">
+                                    <input type="radio" id="channelVideosDataset1" name="dataset1" value="all_videos_csv" data-aos="fade-up" checked>
+                                    <label for="channelVideosDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Videos Dataset</label><br>
+                                    <input type="radio" id="channelPlaylistsDataset1" name="dataset1" value="all_playlists_csv" data-aos="fade-up">
+                                    <label for="channelPlaylistsDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Playlists Dataset</label><br>
+                                    <input type="radio" id="channelInfoDataset1" name="dataset1" value="channel_df_csv" data-aos="fade-up">
+                                    <label for="channelInfoDataset1" data-aos="fade-up"><i class="fa-solid fa-table"></i> With Channel Info Dataset</label>
+                                </div>
+                                <div class="chat" data-aos="fade-up" style="margin-top: 0; ">
+                                <textarea id="messageInput1" type="text" placeholder="Enter your request here" style="margin-top: 0; width:20rem; margin-left: 0; height:5rem"></textarea>
+                                <br>
+                                <button onclick="sendMessageGraphs()">Create Graph</button>
+                                
+                                </div>
+                            </div>
+                            <div class="col"style="width: 100%; display:flex; flex-direction:row; margin-top:3rem;  align-items:center;" >
+                                <h3 style="margin:0; margin-right: 3rem; font-size:1rem; margin-bottom:2rem;">Recheck your <br>datasets <br> Information:</h3>
+                                <div class="datasets smaller-datasets" style="width: 40%; display:flex; flex-direction:row; justify-content:center; align-items:center;">
+                                    <div class="datasets-info" style="display:flex;width: 100%; flex-direction:row; justify-content:space-between; align-items:center;" >
+                                        <div class="dataset" onclick="showDatasetInfo1('ChannelVideos')">
+                                            <i class="fa-solid fa-table"></i>
+                                            <p>Channel Videos Dataset</p>
+                                        </div>
+                                        <div class="dataset" onclick="showDatasetInfo1('ChannelPlaylists')">
+                                            <i class="fa-solid fa-table"></i>
+                                            <p>Channel Playlists Dataset</p>
+                                        </div>
+                                        <div class="dataset" onclick="showDatasetInfo1('ChannelInfo')">
+                                            <i class="fa-solid fa-table"></i>
+                                            <p>Channel Info Dataset</p>
+                                        </div>
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="col" style="width: 100%">
+                                <h3 data-aos="fade-up">Output</h3>
+                                
+                                <div class="answer answer_output" data-aos="fade-up" style="height: 48rem; max-height:48rem;">
+                                    <div id="loading-spinner1" class="loading-spinner floating">
+                                        <!-- Your spinner or loading message here -->
+                                        <img src="{% static 'qusasa/images/Qusasa end.png' %}"  alt="Floating Image">
+                                        <h2>Waiting for the Generator to process...</h2>
+                                    </div>
+                                    <div id="response1">
+                                        <div id='graph_request' class="request">
+                                        
+                                        </div>
+                                        
+                                        <img id="base64Image" src="" alt="Image from Base64" style="max-width: 100%; margin:0;" />
+                                        <a id="download_link" ><i class="fa-solid fa-download"></i> Download Image</a>
+    
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+    
+                    </div>
+                </div>
+            </div>
+    
+            <div class="mini-container " id="section8" style="margin-bottom:5rem;">
+                <div class="schedule-container">
+                    <h1>Do you want to shedule your results?</h1>
+                    <p>You can schedule the analysis to be recived at a certain times hourly, daily, or even monthly!</p>
+                    <a href="{% url 'schedule_channel_analysis_form' %}"><button>Schedule my Analysis Now</button></a>
+        
+                </div>
+               
+            </div>
+
         </div>
 
        
-
-
-        
-
-        <div id="popup_close" class="overlay">
-            <div class="popup">
-                <h2>Do you want to save your results?</h2>
-                <div class="text">
-                    If you choose to save, you will be able to access the content later.
-                    <div class="popup-buttons">
-                        <button class="yes" onclick="saveResults()">Yes, save them</button>
-                        <a href="{% url 'base' %}"><button>Don't save, just exit</button></a>
-                    </div>   
-                </div>
-            </div>
-        </div>
-        
-
-
-
-
     </div>
+    
+
+    
 
 
     <script>
@@ -1536,6 +1529,7 @@
     playlist_piechart.title.text = "Channel playlist pie chart";
     playlist_piechart.legend.show = true
     playlist_piechart.fill = {}
+    
     function formatDateKey(timestamp) {
         var date = new Date(timestamp);
         var year = date.getFullYear();

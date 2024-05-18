@@ -77,7 +77,8 @@ class TopicAnalysisHistory(models.Model):
     language = models.CharField(max_length=50)
     # Add other fields as necessary
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    analysis_data = models.JSONField(blank=True, null=True)
+
 class VideoAnalysisHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     video_url = models.URLField(max_length=2048)
@@ -87,6 +88,8 @@ class PlaylistAnalysisHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     playlist_url = models.URLField(max_length=2048)
     created_at = models.DateTimeField(auto_now_add=True)
+    analysis_data = models.JSONField(blank=True, null=True)
+
 
 class ChannelAnalysisHistory(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -120,6 +123,7 @@ class CompetitiveAnalysisHistory(models.Model):
     language = models.CharField(max_length=100, blank=True, null=True)
     channel_urls = models.JSONField(blank=True, null=True)  # For storing multiple channel URLs if needed
     created_at = models.DateTimeField(auto_now_add=True)
+    analysis_data = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return f"Competitive Analysis for {self.input_text} by {self.user}"
