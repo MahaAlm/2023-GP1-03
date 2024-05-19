@@ -145,18 +145,17 @@ def perform_channel_analysis(history_id, scheduled_analysis_id):
             logger.info('history_saved')
             logger.info(user.email)
 
-            # Send email notification
-            # send_mail(
-            #     'Channel Analysis Complete',
-            #     'Your scheduled analysis is complete. Please log in to view the results.',
-            #     settings.EMAIL_HOST_USER,
-            #     [user.email],
-            #     fail_silently=False,
-            # )
+            
             
             send_mail(
                 'Channel Analysis Complete',
-                'Your scheduled analysis is complete. Please log in to view the results.',
+                f'''
+                    Hello Qusasa's user, {user.first_name}
+                    Qusasa wish you're doing well and in a mood to see your scheduled analysis. Please log in to view the results,
+                    
+                    Qusasa team :)
+
+                ''',
                 'qusasacustomerservice@gmail.com',
                 [user.email],
                 fail_silently=False,

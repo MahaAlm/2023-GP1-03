@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
         'corsheaders',
+        'storages'
 
 ]
 
@@ -57,6 +58,17 @@ CHANNEL_LAYERS = {
 }
 
 
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+GS_BUCKET_NAME = 'qusasa-bucket'  # Replace with your actual bucket name
+
+# Ensure the Google Cloud credentials are available
+from google.oauth2 import service_account
+
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    os.path.join(BASE_DIR, 'bionic-union-402909-6c100e6e07f8.json')  # Replace with the actual path to your JSON key file
+)
+
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -69,6 +81,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = None
@@ -155,7 +170,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_URL = '/media/'
+MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
+# MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
@@ -212,8 +229,6 @@ DEBUG_TOOLBAR_PANELS = [
 
 YOUTUBE_DEVELOPER_KEY = os.environ.get("AIzaSyB5Mi7IXiOBEq5f7nk_kIiq-bVZ6m25rwE")
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
 
 
 REDIS_URL = 'redis://redis-service:6379'
@@ -222,7 +237,6 @@ CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -241,6 +255,7 @@ LOGGING = {
         },
     },
 }
+
 
 # settings.py
 

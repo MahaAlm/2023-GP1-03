@@ -14,10 +14,13 @@ spec:
     spec:
       containers:
         - name: qusasa-web
-          image: gcr.io/qusasa/qusasa-cloud-image:v4
+          image: gcr.io/qusasa/qusasa-cloud-image:v5
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
+          volumeMounts:
+            - name: media
+              mountPath: /app/media
           env:
             - name: DEBUG
               value: "True"
@@ -91,7 +94,7 @@ spec:
                   name: qusasa-database-secrets
                   key: DB_NAME
             - name: ALLOWED_HOSTS
-              value: "0.0.0.0"
+              value: "*"
             - name: SECURE_SSL_REDIRECT
               value: "False"
             - name: SECURE_HSTS_SECONDS
@@ -106,6 +109,9 @@ spec:
               value: "False"
             - name: SECURE_CONTENT_TYPE_NOSNIFF
               value: "False"
+          volumeMounts:
+            - name: media
+              mountPath: /app/media
           resources:
             requests:
               memory: "2048Mi"
@@ -129,3 +135,7 @@ spec:
             timeoutSeconds: 5
             periodSeconds: 10
             failureThreshold: 5
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-pvc

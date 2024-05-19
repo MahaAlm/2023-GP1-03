@@ -19,7 +19,7 @@ services:
 
   web:
     build: .
-    image: qusasa-cloud-image:v4
+    image: qusasa-cloud-image:v5
     command: "uvicorn project_qusasa.asgi:application --host 0.0.0.0 --port 8000 --workers 3"
     volumes:
       - .:/app
@@ -42,7 +42,7 @@ services:
       - DEVELOPER_KEY=${DEVELOPER_KEY}
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - DEBUG=False
+      - DEBUG=True
 
   celery:
     build: .
