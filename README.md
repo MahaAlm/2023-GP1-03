@@ -1,9 +1,15 @@
 # Qusasa
 
-  While the demand for web data is needed by many users from different sectors and backgrounds, the process of collecting it still is challenging, it requires bunch of technical and legal expertise, and the existing solutions still faces a ton of limitations in accommodating to all kinds of users, it is precisely in light of these intricate challenges that we introduce (Qusasa). A Web application that focus on collecting data from social media, in two platforms YouTube and Instagram. Offering easy to use data collection web application for data seekers.
+Qusasa is an AI-powered data analytics platform that simplifies data collection and transforms it into automated, easy-to-understand reports and visuals. Designed for both professionals and non-professionals in data analysis, Qusasa leverages a Django-based MTV architecture for efficient data processing and user-friendly interaction, integrating sophisticated backend modules with a dynamic frontend.
   
-> [!Technical]
-> Qusasa will use multiple APIs and use Django and python with a mix of html/css to build its platform and a database to hold users log in information.
+# Introduction
 
->[!Launch instructions]
->To use Qusasa you will need access to the internet and an account then you can launch qusasa and use the application features to your heart content!.
+Qusasa is developed by Emtenan Alghamdi, Meshael Alessa, Alin Altowim, and Maha Almuaythir, supervised by Dr. Khulood Alyahya. It delivers data through responsive templates and interactive real-time channels, enabling users to easily access the data they need in just a few clicks.
+
+# Usage
+
+	1	Access the website at qusasa.org.
+	2	Create an account using the registration form.
+	3	Log in using your credentials to access the features of the platform.
+
+ 
