@@ -249,6 +249,68 @@ label:hover {
 }
 
     </style>
+          <script>    function previewMultipleImages() {
+            var label = document.getElementById('upload-label');
+            var imageContainer = document.getElementById('image-container'); // This should match your container's ID
+            var files = document.getElementById('upload-photo').files; // Make sure this matches your input's ID
+            var imageWarning = document.getElementById('image-warning');
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        
+            if (files.length > 5) {
+                document.getElementById('upload-photo').value=''
+                imageContainer.innerHTML = '';
+        
+                imageWarning.style.display = 'block';
+                imageWarning.textContent = 'You can only upload up to 5 images.';
+                return; // Exit the function if more than 5 files are uploaded
+            } else if (files.length > 0) {
+                imageWarning.style.display = 'none';
+                label.textContent = 'Change Image';  // Change the label text
+            }
+        
+            if (files.length > 0) {
+                label.textContent = 'Change Image';  // Change the label text
+            }
+            imageContainer.innerHTML = '';  // Clear existing content
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+        
+                if (!allowedTypes.includes(file.type)) {
+                    document.getElementById('upload-photo').value=''
+                    imageWarning.textContent = 'Only JPG, JPEG, and PNG files are allowed.';
+        
+                    imageWarning.style.display = 'block';
+                    continue;  // Skip this file and proceed with the next one
+                } else if (files.length > 0) {
+                    imageWarning.style.display = 'none';
+                    label.textContent = 'Change Image';  // Change the label text
+                }
+        
+        
+                reader.onload = (function(theFile) {
+                    return function(e) {
+                        // Create the elements for each file
+                        var imageWrapper = document.createElement('div');
+                        imageWrapper.className = 'inquiry-image-container';
+        
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = theFile.name;  // Use file name as alt text
+        
+        
+        
+                        // Append the img and button to the div, then the div to the container
+                        imageWrapper.appendChild(img);
+                        imageContainer.appendChild(imageWrapper);
+                    };
+                })(file);
+        
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        </script>  
         <script>
           function updateCounter() {
               const maxChars = 60;
@@ -336,7 +398,7 @@ label:hover {
                               <p><b>Add an Image</b></p>
                               <br>
                               <label for="upload-photo">Upload Image</label>
-                              <input type="file" name="picture" id="upload-photo" accept="image/*" style="display: none;" onchange="previewImage();" />
+                              <input type="file" name="picture" id="upload-photo" accept="image/*" style="display: none;" onchange="previewMultipleImages();" />
                               <br><br>
                               <img id="display-image" alt="Image will be displayed here after uploading." style="margin: 3.5%; display: none;  width: 100px; height: 100px; border-radius: 10px;"/>
                               </div>
