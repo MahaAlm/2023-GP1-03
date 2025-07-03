@@ -12,19 +12,6 @@ Qusasa is developed by Emtenan Alghamdi, Meshael Alessa, Alin Altowim, and Maha 
 2. Create an account using the registration form.
 3. Log in using your credentials to access the features of the platform.
 
-## Testing
-
-1. Access the website at [qusasa.org](https://qusasa.org).
-2. Create an account and log in.
-3. If a demo account is needed, use the following superuser credentials:
-   - **Username:** qusasacustomerservice@gmail.com
-   - **Password:** 123Qusasa123
-4. For an Admin login, use the following credentials:
-   - **Username:** qusasacustomerservice@gmail.com
-   - **Password:** 123Qusasa123
-     
-     With the link: [qusasa.org](https://qusasa.org/admin).
-
 
 ## Features
 
